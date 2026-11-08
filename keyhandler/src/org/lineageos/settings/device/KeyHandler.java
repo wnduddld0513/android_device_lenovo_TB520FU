@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package org.lineageos.tb520fu.keyhandler;
+package org.lineageos.settings.device;
 
 import android.content.Context;
 import android.graphics.PixelFormat;

@@ -47,7 +47,7 @@ PRODUCT_PACKAGES += \
 # Key handler: folio cover (sleep when closed, wake when opened) and the
 # stylus refresh rate (120 Hz while the pen is near)
 PRODUCT_PACKAGES += \
-    tb520fu-keyhandler
+    KeyHandler
 
 # Stock Lenovo keyboard keylayouts and input device configurations
 PRODUCT_COPY_FILES += \
