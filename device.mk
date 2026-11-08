@@ -73,6 +73,13 @@ $(call soong_config_set,lineage_health,charging_control_charging_enabled,1)
 $(call soong_config_set,lineage_health,charging_control_charging_disabled,0)
 $(call soong_config_set_bool,lineage_health,charging_control_supports_bypass,true)
 
+# LiveDisplay: AdaptiveBacklight switches the panel CABC through
+# /sys/devices/platform/soc/soc:qcom,dsi-display-primary/cabc (UI / off)
+PRODUCT_PACKAGES += \
+    vendor.lineage.livedisplay-service.sysfs
+
+$(call soong_config_set_bool,livedisplay_sysfs,enable_ab,true)
+
 # Init
 PRODUCT_PACKAGES += \
     fstab.zram.0 \
