@@ -54,6 +54,14 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     KeyHandler
 
+# Bluetooth pen (Lenovo Tab Pen Plus / Tab Pen Pro): pairing prompt, touch
+# panel pen mode and charging pad commands
+PRODUCT_PACKAGES += \
+    LenovoPen
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/pen/default-permissions/org.lineageos.pen.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/default-permissions/org.lineageos.pen.xml
+
 # Stock Lenovo keyboard keylayouts and input device configurations
 PRODUCT_COPY_FILES += \
     $(call find-copy-subdir-files,*.kl,device/lenovo/TB520FU/configs/keylayout,$(TARGET_COPY_OUT_VENDOR)/usr/keylayout) \

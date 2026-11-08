@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: 2026 The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+
+     The pairing prompt strings and their translations are those of the
+     LineageOS OnePlus pen app (hardware/oplus packages/Pen).
+-->
+<resources>
+    <string name="app_name" translatable="false">LenovoPen</string>
+    <string name="pen_attached">Pen attached</string>
+    <string name="tap_to_connect">Tap to connect</string>
+</resources>

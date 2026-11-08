@@ -9,10 +9,10 @@ hal_attribute(lenovodisplay)
 hal_attribute(lenovokeyboard)
 hal_attribute(lenovotouchscreen)
 
-type hal_lenovobattery_service, protected_service, service_manager_type;
+type hal_lenovobattery_service, protected_service, hal_service_type, service_manager_type;
 type hal_lenovodisplay_service, protected_service, service_manager_type;
 type hal_lenovokeyboard_service, protected_service, service_manager_type;
-type hal_lenovotouchscreen_service, protected_service, service_manager_type;
+type hal_lenovotouchscreen_service, protected_service, hal_service_type, service_manager_type;
 
 binder_call(hal_lenovobattery_client, hal_lenovobattery_server)
 binder_call(hal_lenovobattery_server, hal_lenovobattery_client)
@@ -68,7 +68,7 @@ allow hal_lenovokeyboard_default vendor_sysfs_lenovo_kb:file rw_file_perms;
 # Keyboard firmware update over USB HID (/dev/hidraw*)
 allow hal_lenovokeyboard_default vendor_hidraw_device:chr_file rw_file_perms;
 
-# Touchscreen (pen mode, pen BLE state, double tap gesture, haptics via ioctl)
+# Touchscreen (pen mode, pen BLE state, pen type via ioctl, double tap gesture)
 type hal_lenovotouchscreen_default, domain;
 hal_server_domain(hal_lenovotouchscreen_default, hal_lenovotouchscreen)
 type hal_lenovotouchscreen_default_exec, exec_type, vendor_file_type, file_type;
@@ -76,3 +76,12 @@ init_daemon_domain(hal_lenovotouchscreen_default)
 binder_use(hal_lenovotouchscreen_default)
 allow hal_lenovotouchscreen_default vendor_proc_lenovo_touch:file rw_file_perms;
 allow hal_lenovotouchscreen_default proc:file rw_file_perms;
+
+# LenovoPen (org.lineageos.pen, system_ext, platform signed) is the only app
+# that drives the pen: the touch panel pen mode and pen type, and the pen
+# charger commands of the battery HAL. These are the
+# pen-only methods of the two HALs; nothing else of either HAL is called from
+# an app. Both service types carry hal_service_type like every AIDL HAL, which
+# is what the appdomain service_manager neverallow exempts.
+hal_client_domain(platform_app, hal_lenovotouchscreen)
+hal_client_domain(platform_app, hal_lenovobattery)
