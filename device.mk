@@ -28,8 +28,8 @@ PRODUCT_VENDOR_PROPERTIES += \
 # Dalvik
 $(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-heap.mk)
 
-# WiFi Display (Miracast): the QTI session of the OnePlus QSSI blobs
-# (proprietary-files.txt) with the QTI display config clients built from source
+# WiFi Display (Miracast): the stock QTI session (proprietary-files.txt) with
+# the QTI display config clients built from source
 PRODUCT_PACKAGES += \
     libdisplayconfig.system.qti \
     vendor.display.config@2.0 \
