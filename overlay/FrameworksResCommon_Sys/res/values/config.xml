@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<!-- Values from the stock QSSI framework overlay
+     (product/overlay/FrameworksResCommon_Sys.apk). -->
+<resources>
+    <!-- Refresh rate.  Without an override AOSP leaves config_defaultRefreshRate at
+         60, which DisplayModeDirector turns into a global [0, 60] Hz render vote, so
+         scrolling and animations ran at 60 fps on the 144 Hz panel.  The stock RROs
+         (FrameworksResCommon_Sys, FrameworksResTarget_Vendor) set it to 0 (no global
+         render cap); the stock default rate is 120 Hz with 30/60/90/120/144
+         user-selectable
+         (ro.config.lgsi.default_refreshrate=120,
+         ro.config.lgsi.surface_flinger.available_refreshrates=30_60_90_120_144),
+         applied by ZUI's own framework. -->
+    <integer name="config_defaultRefreshRate">0</integer>
+</resources>

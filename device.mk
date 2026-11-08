@@ -96,14 +96,18 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/modules/system_dlkm.modules.blocklist:$(TARGET_COPY_OUT_VENDOR_DLKM)/lib/modules/system_dlkm.modules.blocklist
 
-# Overlays
+# Overlays: one runtime resource overlay per stock ZUI overlay the values come
+# from (product/overlay, vendor/overlay), plus the LineageOS-only values under
+# overlay-lineage
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay-lineage
 
 PRODUCT_ENFORCE_RRO_TARGETS := *
 PRODUCT_PACKAGES += \
     ApertureResTarget \
-    FrameworksResTarget \
+    FrameworksResCommon_Sys \
+    FrameworksResTarget_Vendor \
+    LapisRowFrameworksOverlay \
     SettingsProviderResTarget \
     SettingsResTarget \
     WifiResTarget

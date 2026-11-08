@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <!-- Refresh rate.  Without an override AOSP leaves config_defaultRefreshRate at
+         60, which DisplayModeDirector turns into a global [0, 60] Hz render vote, so
+         scrolling and animations ran at 60 fps on the 144 Hz panel.  The stock RROs
+         (FrameworksResCommon_Sys, FrameworksResTarget_Vendor) set
+         config_defaultRefreshRate to 0 (no global render cap; kept in
+         overlay/FrameworksResCommon_Sys); the stock default rate is 120 Hz with
+         30/60/90/120/144 user-selectable
+         (ro.config.lgsi.default_refreshrate=120,
+         ro.config.lgsi.surface_flinger.available_refreshrates=30_60_90_120_144),
+         applied by ZUI's own framework.  Keep stock's 0 and make 120 the default
+         user peak, so the device defaults to 120 Hz and 144 Hz stays selectable in
+         Settings like stock.  This peak is not a stock overlay value: the stock
+         overlays only carry 240 (FrameworksResCommon_Sys, FrameworksResTarget_Vendor). -->
+    <integer name="config_defaultPeakRefreshRate">120</integer>
+
+    <!-- Memory extension: let StorageManagerService schedule the zram
+         writeback job (the backing file comes from fstab.zram.N) -->
+    <bool name="config_zramWriteback">true</bool>
+
+    <!-- Color modes (Settings > Display > Colors): Natural, Boosted, Adaptive.
+         Adaptive (persist.sys.sf.native_mode=2, system_ext.prop) is the default.
+         The stock ZUI list (FrameworksResCommon_Sys) is the same three modes
+         followed by the ten vendor modes 256..265; those are not AOSP colour modes
+         but raw HAL render intents (SurfaceFlinger's Output.cpp passes the vendor
+         value straight to the HWC as the render intent), which only ZUI's own
+         Settings/display HAL know how to present, so they are left out here. -->
+    <integer-array name="config_availableColorModes">
+        <item>0</item>
+        <item>1</item>
+        <item>3</item>
+    </integer-array>
+
+    <!-- Display white balance is NOT enabled: the stock ZUI firmware does not
+         configure it (no overlay in /product/overlay or /vendor/overlay sets any
+         config_displayWhiteBalance* resource, so the stock framework uses the AOSP
+         defaults config_displayWhiteBalanceAvailable=false and
+         config_displayWhiteBalanceEnabledDefault=false).  With it enabled the
+         tcs3408 RGB sensor drove a global colour matrix that dimmed R/G by ~8%
+         (dumpsys color_display: mCurrentColorTemperature=6843,
+         mMatrixDisplayWhiteBalance=0.923782/0.910456; the same matrix is applied by
+         SurfaceFlinger as colorTransformMatrix), i.e. a greenish cast and a dimmer
+         picture than stock.  The panel's own calibration is what stock shows, which
+         is also what the "Natural" colour mode is supposed to look like. -->
+
+    <!-- WiFi Display (Miracast) through the QTI session (WfdCommon) -->
+    <bool name="config_enableWifiDisplay">true</bool>
+</resources>
