@@ -28,6 +28,8 @@ import android.view.KeyEvent;
 
 import com.android.internal.os.DeviceKeyHandler;
 
+import org.lineageos.settings.device.pen.PenUEventRelay;
+
 /**
  * Folio cover: puts the device to sleep when the cover is closed and wakes it
  * when the cover is opened.
@@ -58,6 +60,9 @@ import com.android.internal.os.DeviceKeyHandler;
  * application frame rate vote cannot go above the user's peak.
  *
  * Double tap to wake: see DoubleTapToWake.
+ *
+ * Pen: the pen charger uevents are relayed to the LenovoPen app (see the pen
+ * package).
  */
 public class KeyHandler implements DeviceKeyHandler {
     private static final String TAG = "KeyHandler";
@@ -81,6 +86,8 @@ public class KeyHandler implements DeviceKeyHandler {
     private final SensorManager mSensorManager;
     private final Sensor mLightSensor;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
+    /** Null when the pen bridge could not be created; the rest still works. */
+    private PenUEventRelay mPenUEvent;
 
     private boolean mLightRegistered;
     // The cover was closed on a dark screen, so opening it wakes the device
@@ -124,6 +131,18 @@ public class KeyHandler implements DeviceKeyHandler {
         mLightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
 
         new DoubleTapToWake(context, mHandler);
+
+        // The pen bridge must never keep the rest of the key handler from
+        // loading: this class runs in system_server, so a failure here would
+        // take the folio cover, double tap to wake and the stylus refresh rate
+        // down with it.
+        try {
+            final PenUEventRelay relay = new PenUEventRelay(context);
+            relay.start();
+            mPenUEvent = relay;
+        } catch (RuntimeException e) {
+            Log.e(TAG, "Pen bridge unavailable", e);
+        }
 
         // A minimum the stylus raised before a reboot or under another user
         // goes back to what the user had. The system user is the current one

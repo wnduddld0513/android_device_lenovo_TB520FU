@@ -7,5 +7,15 @@
      components of its own. -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="org.lineageos.settings.device">
+    <!-- Pen charger uevents are handed to the pen app with this signature
+         permission; the app is signed with the platform key as well, no other
+         app can receive or send them. -->
+    <permission
+        android:name="org.lineageos.pen.permission.PEN_EVENTS"
+        android:protectionLevel="signature" />
+
+    <!-- The pen app may ask for the cached charger uevent. -->
+    <uses-permission android:name="org.lineageos.pen.permission.PEN_EVENTS" />
+
     <application />
 </manifest>
