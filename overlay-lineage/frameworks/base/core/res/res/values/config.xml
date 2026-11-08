@@ -198,6 +198,13 @@
     <integer name="config_displayWhiteBalanceTransitionTimeIncrease">2000</integer>
     <integer name="config_displayWhiteBalanceTransitionTimeDecrease">2000</integer>
 
+    <!-- Double tap to wake (Settings > Display > Tap to wake).  The touch
+         controller runs the gesture; the stock power HAL does not implement
+         Mode.DOUBLE_TAP_TO_WAKE, so the device key handler applies the setting
+         (keyhandler: DoubleTapToWake).  Not a stock overlay value: ZUI uses its
+         own setting and touchscreen HAL. -->
+    <bool name="config_supportDoubleTapWake">true</bool>
+
     <!-- WiFi Display (Miracast) through the QTI session (WfdCommon) -->
     <bool name="config_enableWifiDisplay">true</bool>
 </resources>

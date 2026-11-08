@@ -1,6 +1,7 @@
 type vendor_sysfs_hw_info, sysfs_type, fs_type;
 
-# Lenovo keyboard (soc:lenovo_kb) and touch panel pen id (/proc/Pen_ID)
+# Lenovo keyboard (soc:lenovo_kb), touch panel pen id (/proc/Pen_ID) and double
+# tap to wake switch (/proc/gesture_control)
 type vendor_sysfs_lenovo_kb, sysfs_type, fs_type;
 type vendor_proc_lenovo_touch, proc_type, fs_type;
 

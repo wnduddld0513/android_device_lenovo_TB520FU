@@ -45,6 +45,8 @@ import com.android.internal.os.DeviceKeyHandler;
  * DisplayManager#requestDisplayModes() is ignored. The window goes away
  * STYLUS_TIMEOUT_MS after the last report, like the stock SurfaceFlinger pen
  * timer (ro.surface_flinger.set_pen_timer_ms).
+ *
+ * Double tap to wake: see DoubleTapToWake.
  */
 public class KeyHandler implements DeviceKeyHandler {
     private static final String TAG = "TB520FUFolio";
@@ -104,6 +106,8 @@ public class KeyHandler implements DeviceKeyHandler {
         mPowerManager = context.getSystemService(PowerManager.class);
         mSensorManager = context.getSystemService(SensorManager.class);
         mLightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+
+        new DoubleTapToWake(context, mHandler);
 
         // The wake-up variant also reports while the screen is off
         final Sensor hall = mSensorManager.getDefaultSensor(TYPE_HALL_EFFECT, true);
