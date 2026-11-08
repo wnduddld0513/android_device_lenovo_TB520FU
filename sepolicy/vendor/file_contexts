@@ -1,9 +1,6 @@
 # UFS bsg nodes used by the TEE (RPMB)
 /dev/0:0:0:[0-9]+                               u:object_r:vendor_bsg_device:s0
 
-# Health HAL (device copy that ignores wls_tx)
-/vendor/bin/hw/android\.hardware\.health-service\.lenovo u:object_r:hal_health_default_exec:s0
-
 # Persist: awinic speaker amplifier calibration
 /mnt/vendor/persist/factory/audio(/.*)?         u:object_r:vendor_persist_audio_file:s0
 
