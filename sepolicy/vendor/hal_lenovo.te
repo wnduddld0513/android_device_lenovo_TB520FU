@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: The LineageOS Project
+# SPDX-License-Identifier: Apache-2.0
+
 # Lenovo vendor HALs (vendor.lenovo.hardware.*), stock AIDL services.
 # Types and rules follow the stock vendor policy.
 
