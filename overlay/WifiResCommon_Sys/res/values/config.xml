@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<!-- Stock QSSI common Wi-Fi values (product/overlay/WifiResCommon_Sys.apk),
+     where they differ from the defaults: larger TCP send buffers (4 MiB max),
+     country code from driver regulatory events, SoftAP features, connected MAC
+     randomization.  The stock overlay sets
+     config_wifiUpdateCountryCodeFromScanResultGeneric to true on top of the
+     framework default of false; it is left out here (as it is not overridden
+     today), so the framework default false stands. -->
+<resources>
+    <bool name="config_wifiAllowMultipleNetworksOnSameAwareNdi">true</bool>
+    <bool name="config_wifiDriverSupportedNl80211RegChangedEvent">true</bool>
+    <bool name="config_wifiEnablePartialInitialScan">true</bool>
+    <bool name="config_wifiForcedSoftApRestartWhenCountryCodeChanged">false</bool>
+    <bool name="config_wifiNetworkCentricQosPolicyFeatureEnabled">true</bool>
+    <bool name="config_wifiSaeUpgradeOffloadEnabled">true</bool>
+    <bool name="config_wifiSoftApDynamicCountryCodeUpdateSupported">true</bool>
+    <bool name="config_wifiSoftapAcsIncludeDfs">true</bool>
+    <bool name="config_wifiSoftapHeSuBeamformeeSupported">true</bool>
+    <bool name="config_wifiSoftapHeSuBeamformerSupported">true</bool>
+    <bool name="config_wifiSoftapIeee80211axSupported">true</bool>
+    <bool name="config_wifiSoftapOweSupported">true</bool>
+    <bool name="config_wifiSoftapOweTransitionSupported">true</bool>
+    <bool name="config_wifiStaDynamicCountryCodeUpdateSupported">true</bool>
+    <bool name="config_wifi_background_scan_support">true</bool>
+    <bool name="config_wifi_connected_mac_randomization_supported">true</bool>
+    <bool name="config_wifi_only_link_same_credential_configurations">false</bool>
+    <bool name="config_wifi_p2p_mac_randomization_supported">true</bool>
+    <bool name="config_wifi_softap_acs_supported">true</bool>
+    <bool name="config_wifi_softap_ieee80211ac_supported">true</bool>
+    <bool name="config_wifi_softap_sae_supported">true</bool>
+    <string name="config_wifi_tcp_buffers">524288,1048576,2097152,524288,1048576,4194304</string>
+    <integer name="config_wifiBssidBlocklistMonitorApUnableToHandleNewStaThreshold">3</integer>
+    <integer name="config_wifiDelayDisconnectOnImsLostMs">1000</integer>
+    <integer name="config_wifiHardwareSoftapMaxClientCount">32</integer>
+    <integer name="config_wifiMaxNumWifiConfigurations">1000</integer>
+</resources>

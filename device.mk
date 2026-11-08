@@ -108,8 +108,10 @@ PRODUCT_PACKAGES += \
     FrameworksResCommon_Sys \
     FrameworksResTarget_Vendor \
     LapisRowFrameworksOverlay \
+    LapisRowWifiResOverlay \
     SettingsProviderResTarget \
     SettingsResTarget \
+    WifiResCommon_Sys \
     WifiResTarget
 
 # The NT36532 touch IC is flashless: nvt_36xxx downloads this firmware 5 s
