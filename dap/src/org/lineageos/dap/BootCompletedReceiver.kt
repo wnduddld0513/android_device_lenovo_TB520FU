@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 The LineageOS Project
+ * Copyright (C) 2022-2025 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,13 @@ package org.lineageos.dap
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import androidx.preference.PreferenceManager
-import org.lineageos.dap.DolbyFragment.Companion.PREF_DOLBY_ENABLE
-import org.lineageos.dap.DolbyFragment.Companion.PREF_DOLBY_MODES
 
 class BootCompletedReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context)
-        for ((key, value) in PREF_DOLBY_MODES) {
-            if (sharedPrefs.getBoolean(key, false)) {
-                DolbyCore.setProfile(value)
-                break
-            }
-        }
-        DolbyCore.setEnabled(sharedPrefs.getBoolean(PREF_DOLBY_ENABLE, false))
+        // The stock DAX3 service ships the effect enabled: DefaultValues.DEFAULT_DS_STATE is true
+        // in daxService.apk, and DaxService.setDaxSettingsForUser restores the persisted profile
+        // (Settings.Global "dolby_dap_profile") together with the equalizer curve.
+        DolbyCore.restore(context)
     }
 }

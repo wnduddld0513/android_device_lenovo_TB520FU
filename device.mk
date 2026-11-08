@@ -44,6 +44,11 @@ PRODUCT_SYSTEM_EXT_PROPERTIES += \
 PRODUCT_PACKAGES += \
     DolbyVisionService
 
+# Dolby Atmos settings (DAP): on/off, profile and Quick Settings tile for
+# the stock DAX3 DAP effect (vendor/lib64/soundfx/libswdap.so)
+PRODUCT_PACKAGES += \
+    LenovoDAP
+
 # Key handler: folio cover (sleep when closed, wake when opened) and the
 # stylus refresh rate (120 Hz while the pen is near)
 PRODUCT_PACKAGES += \

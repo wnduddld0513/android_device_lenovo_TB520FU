@@ -25,7 +25,7 @@
     <application
         android:defaultToDeviceProtectedStorage="true"
         android:directBootAware="true"
-        android:label="SamsungDAP"
+        android:label="@string/dolby_title"
         android:persistent="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.SubSettingsBase.Expressive">

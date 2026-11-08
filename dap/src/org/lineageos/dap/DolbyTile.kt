@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 The LineageOS Project
+ * Copyright (C) 2022-2025 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,29 +18,30 @@ package org.lineageos.dap
 
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
-import androidx.preference.PreferenceManager
-import org.lineageos.dap.DolbyFragment.Companion.PREF_DOLBY_ENABLE
 
 class DolbyTile : TileService() {
-    private var isEnabled = false
-        set(value) {
-            field = value
-            qsTile.state = if (value) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
-            qsTile.subtitle = DolbyCore.getProfileName(this)
-            qsTile.updateTile()
-        }
 
     override fun onStartListening() {
         super.onStartListening()
-        isEnabled = DolbyCore.isEnabled()
+        updateTile()
     }
 
     override fun onClick() {
-        isEnabled = !isEnabled
-        DolbyCore.setEnabled(isEnabled)
-        PreferenceManager.getDefaultSharedPreferences(this)
-            .edit()
-            .putBoolean(PREF_DOLBY_ENABLE, isEnabled)
-            .commit()
+        // Same states as the settings screen: the tile switches the effect on and off and keeps
+        // the profile that was selected last (Settings.Global "dolby_dap_profile").
+        if (DolbyCore.getMode() == DolbyCore.MODE_OFF) {
+            DolbyCore.setMode(DolbyCore.getLastProfile(this), this)
+        } else {
+            DolbyCore.setMode(DolbyCore.MODE_OFF, this)
+        }
+        updateTile()
+    }
+
+    private fun updateTile() {
+        val mode = DolbyCore.getMode()
+        qsTile.state =
+            if (mode == DolbyCore.MODE_OFF) Tile.STATE_INACTIVE else Tile.STATE_ACTIVE
+        qsTile.subtitle = DolbyFragment.modeTitle(this, mode)
+        qsTile.updateTile()
     }
 }
