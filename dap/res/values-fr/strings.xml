@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dolby_enable_title">Activer Dolby Atmos</string>
-    <string name="dolby_top_intro_summary">Expérimentez un son révolutionnaire pour la lecture des médias qui circule tout autour de vous</string>
-    <string name="dolby_profile_auto">Automatique</string>
-    <string name="dolby_profile_game">Jeu</string>
-    <string name="dolby_profile_game_1">Jeu 1</string>
-    <string name="dolby_profile_game_2">Jeu 2</string>
+    <string name="dolby_mode_category">Mode Dolby</string>
+    <string name="dolby_profile_dynamic">Dynamique</string>
     <string name="dolby_profile_movie">Film</string>
     <string name="dolby_profile_music">Musique</string>
-    <string name="dolby_profile_off">Aucun profil</string>
-    <string name="dolby_profile_spacial_audio">Audio spatial</string>
-    <string name="dolby_profile_voice">Voix</string>
+    <string name="dolby_preset_none">Désactivé</string>
+    <string name="dolby_preset_detailed">Détaillé</string>
+    <string name="dolby_preset_balanced">Équilibré</string>
+    <string name="dolby_preset_warm">Chaud</string>
+    <string name="dolby_dialogue_enhancer_title">Amélioration du dialogue</string>
+    <string name="dolby_geq_title">Égaliseur</string>
+    <string name="dolby_geq_reset">Réinitialiser</string>
 </resources>

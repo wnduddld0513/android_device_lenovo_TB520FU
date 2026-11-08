@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dolby_enable_title">Activar Dolby Atmos</string>
-    <string name="dolby_top_intro_summary">Esperimenta un audiu innovador pa la reproducción multimedia que flúi alredor de ti</string>
-    <string name="dolby_profile_game">Xuegu</string>
-    <string name="dolby_profile_game_1">Xuegu 1</string>
-    <string name="dolby_profile_game_2">Xuegu 2</string>
-    <string name="dolby_profile_movie">Filme</string>
+    <string name="dolby_mode_category">Mou Dolby</string>
+    <string name="dolby_profile_dynamic">Dinámicu</string>
+    <string name="dolby_profile_movie">Película</string>
     <string name="dolby_profile_music">Música</string>
-    <string name="dolby_profile_spacial_audio">Audiu espacial</string>
-    <string name="dolby_profile_voice">Voz</string>
+    <string name="dolby_preset_none">Nengún</string>
+    <string name="dolby_preset_detailed">Detalláu</string>
+    <string name="dolby_preset_balanced">Equilibráu</string>
+    <string name="dolby_preset_warm">Cálidu</string>
+    <string name="dolby_dialogue_enhancer_title">Meyorador de diálogu</string>
+    <string name="dolby_geq_title">Ecualizador</string>
+    <string name="dolby_geq_reset">Reafitar</string>
 </resources>

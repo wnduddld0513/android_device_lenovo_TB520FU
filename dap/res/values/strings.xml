@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Title -->
+    <!-- Title: product name, never translated -->
     <string name="dolby_title" translatable="false">Dolby Atmos</string>
 
-    <!-- Switch bar -->
-    <string name="dolby_enable_title">Enable Dolby Atmos</string>
+    <!-- Mode category -->
+    <string name="dolby_mode_category">Dolby mode</string>
 
-    <!-- Intro -->
-    <string name="dolby_top_intro_summary">Experience breakthrough audio for media playback that flows above and around you</string>
-
-    <!-- Profiles -->
+    <!-- Mode names -->
     <string name="dolby_profile_dynamic">Dynamic</string>
-    <string name="dolby_profile_game">Game</string>
     <string name="dolby_profile_movie">Movie</string>
     <string name="dolby_profile_music">Music</string>
-    <string name="dolby_profile_spatial_audio">Spatial audio</string>
-    <string name="dolby_profile_voice">Voice</string>
+
+    <!-- Music presets -->
+    <string name="dolby_preset_none">Off</string>
+    <string name="dolby_preset_detailed">Detailed</string>
+    <string name="dolby_preset_balanced">Balanced</string>
+    <string name="dolby_preset_warm">Warm</string>
+
+    <!-- Dialogue enhancer -->
+    <string name="dolby_dialogue_enhancer_title">Dialogue Enhancer</string>
+
+    <!-- Equalizer -->
+    <string name="dolby_geq_title">Equalizer</string>
+    <string name="dolby_geq_reset">Reset</string>
 </resources>

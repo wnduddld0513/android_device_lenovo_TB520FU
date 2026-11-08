@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dolby_profile_off">Няма профілю</string>
+    <string name="dolby_mode_category">Рэжым Dolby</string>
+    <string name="dolby_profile_dynamic">Дынамічны</string>
+    <string name="dolby_profile_movie">Фільм</string>
+    <string name="dolby_profile_music">Музыка</string>
+    <string name="dolby_preset_none">Няма</string>
+    <string name="dolby_preset_detailed">Дэталёвы</string>
+    <string name="dolby_preset_balanced">Збалансаваны</string>
+    <string name="dolby_preset_warm">Цёплы</string>
+    <string name="dolby_dialogue_enhancer_title">Паляпшальнік дыялогу</string>
+    <string name="dolby_geq_title">Эквалайзер</string>
+    <string name="dolby_geq_reset">Скінуць</string>
 </resources>

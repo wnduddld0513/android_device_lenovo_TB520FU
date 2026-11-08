@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dolby_enable_title">چالاککردنی Dolby Atmos</string>
-    <string name="dolby_top_intro_summary">ئەزموونی دەنگێکی بێوێنە بکە بۆ میدیا کە بە سەر و دەوروبەرتدا تێپەڕ دەبێت</string>
-    <string name="dolby_profile_auto">خۆکار</string>
-    <string name="dolby_profile_game">یاری</string>
-    <string name="dolby_profile_game_1">یاریی 1</string>
-    <string name="dolby_profile_game_2">یاریی 2</string>
+    <string name="dolby_mode_category">دۆخی Dolby</string>
+    <string name="dolby_profile_dynamic">داینامیک</string>
     <string name="dolby_profile_movie">فیلم</string>
     <string name="dolby_profile_music">مۆسیقا</string>
-    <string name="dolby_profile_off">بێ پڕۆفایل</string>
-    <string name="dolby_profile_spacial_audio">دەنگی سێ ڕەهەندی (Spacial)</string>
-    <string name="dolby_profile_voice">دەنگ (Voice)</string>
+    <string name="dolby_preset_none">هیچ</string>
+    <string name="dolby_preset_detailed">وردەکاری</string>
+    <string name="dolby_preset_balanced">هاوسەنگ</string>
+    <string name="dolby_preset_warm">گەرم</string>
+    <string name="dolby_dialogue_enhancer_title">باشترکەری گفتوگۆ</string>
+    <string name="dolby_geq_title">یەکسانکەر</string>
+    <string name="dolby_geq_reset">ڕێکخستنەوە</string>
 </resources>

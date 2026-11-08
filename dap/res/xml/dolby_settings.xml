@@ -30,7 +30,7 @@
 
         <com.android.settingslib.widget.SelectorWithWidgetPreference
             android:key="dolby_mode_off"
-            android:title="@android:string/capital_off" />
+            android:title="@string/dolby_preset_none" />
 
         <com.android.settingslib.widget.SelectorWithWidgetPreference
             android:key="dolby_mode_dynamic"

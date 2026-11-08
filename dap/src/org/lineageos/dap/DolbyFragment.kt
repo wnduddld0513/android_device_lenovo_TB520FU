@@ -98,7 +98,7 @@ class DolbyFragment :
         screen.addPreference(
             Preference(requireContext()).apply {
                 key = PREF_GEQ_RESET
-                setTitle(android.R.string.reset)
+                setTitle(R.string.dolby_geq_reset)
                 onPreferenceClickListener = this@DolbyFragment
             }
         )
@@ -231,7 +231,7 @@ class DolbyFragment :
                 DolbyCore.MODE_MOVIE -> context.getString(R.string.dolby_profile_movie)
                 DolbyCore.MODE_MUSIC -> context.getString(R.string.dolby_profile_music)
                 DolbyCore.MODE_DYNAMIC -> context.getString(R.string.dolby_profile_dynamic)
-                else -> context.getString(android.R.string.capital_off)
+                else -> context.getString(R.string.dolby_preset_none)
             }
     }
 }

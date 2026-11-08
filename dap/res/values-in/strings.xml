@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dolby_enable_title">Aktifkan Dolby Atmos</string>
-    <string name="dolby_top_intro_summary">Rasakan terobosan audio untuk pemutaran media yang mengalir di atas dan di sekitar Anda.</string>
-    <string name="dolby_profile_auto">Otomatis</string>
-    <string name="dolby_profile_game">Game</string>
-    <string name="dolby_profile_game_1">Game 1</string>
-    <string name="dolby_profile_game_2">Game 2</string>
+    <string name="dolby_mode_category">Mode Dolby</string>
+    <string name="dolby_profile_dynamic">Dinamis</string>
     <string name="dolby_profile_movie">Film</string>
     <string name="dolby_profile_music">Musik</string>
-    <string name="dolby_profile_off">Tidak ada profil</string>
-    <string name="dolby_profile_spacial_audio">Spasial audio</string>
-    <string name="dolby_profile_voice">Suara</string>
+    <string name="dolby_preset_none">Tidak ada</string>
+    <string name="dolby_preset_detailed">Detail</string>
+    <string name="dolby_preset_balanced">Seimbang</string>
+    <string name="dolby_preset_warm">Hangat</string>
+    <string name="dolby_dialogue_enhancer_title">Penyempurna Dialog</string>
+    <string name="dolby_geq_title">Equalizer</string>
+    <string name="dolby_geq_reset">Setel ulang</string>
 </resources>

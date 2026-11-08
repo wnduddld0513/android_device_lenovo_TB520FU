@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dolby_enable_title">Включить Dolby Atmos</string>
-    <string name="dolby_top_intro_summary">Испытайте революционный звук для воспроизведения мультимедиа, который струится над вами и вокруг вас</string>
-    <string name="dolby_profile_auto">Авто</string>
-    <string name="dolby_profile_game">Игра</string>
-    <string name="dolby_profile_game_1">Игра 1</string>
-    <string name="dolby_profile_game_2">Игра 2</string>
-    <string name="dolby_profile_movie">Фильм</string>
+    <string name="dolby_mode_category">Режим Dolby</string>
+    <string name="dolby_profile_dynamic">Динамич.</string>
+    <string name="dolby_profile_movie">Кино</string>
     <string name="dolby_profile_music">Музыка</string>
-    <string name="dolby_profile_off">Без профиля</string>
-    <string name="dolby_profile_spacial_audio">Пространственный звук</string>
-    <string name="dolby_profile_voice">Голос</string>
+    <string name="dolby_preset_none">Выкл</string>
+    <string name="dolby_preset_detailed">Детальный</string>
+    <string name="dolby_preset_balanced">Гармоничный</string>
+    <string name="dolby_preset_warm">Теплый</string>
+    <string name="dolby_dialogue_enhancer_title">Усилитель голоса</string>
+    <string name="dolby_geq_title">Эквалайзер</string>
+    <string name="dolby_geq_reset">Сбросить</string>
 </resources>

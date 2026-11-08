@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dolby_enable_title">돌비 애트모스 사용</string>
-    <string name="dolby_top_intro_summary">사용자 주변을 타고 흐르는 듯한 강력하고 생동감 있는 오디오 경험 제공</string>
-    <string name="dolby_profile_auto">자동</string>
-    <string name="dolby_profile_game">게임</string>
-    <string name="dolby_profile_game_1">게임 1</string>
-    <string name="dolby_profile_game_2">게임 2</string>
+    <string name="dolby_mode_category">Dolby 모드</string>
+    <string name="dolby_profile_dynamic">동적</string>
     <string name="dolby_profile_movie">영화</string>
     <string name="dolby_profile_music">음악</string>
-    <string name="dolby_profile_off">프로필 없음</string>
-    <string name="dolby_profile_spacial_audio">공간 음향</string>
-    <string name="dolby_profile_voice">음성</string>
+    <string name="dolby_preset_none">끄기</string>
+    <string name="dolby_preset_detailed">디테일</string>
+    <string name="dolby_preset_balanced">밸런스</string>
+    <string name="dolby_preset_warm">따뜻함</string>
+    <string name="dolby_dialogue_enhancer_title">대화 인핸서</string>
+    <string name="dolby_geq_title">이퀄라이저</string>
+    <string name="dolby_geq_reset">초기화</string>
 </resources>

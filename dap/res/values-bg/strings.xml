@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dolby_enable_title">Включи Dolby Atmos</string>
-    <string name="dolby_top_intro_summary">възпроизвеждане</string>
-    <string name="dolby_profile_auto">Авт.</string>
-    <string name="dolby_profile_game">Игра</string>
-    <string name="dolby_profile_game_1">Игра 1</string>
-    <string name="dolby_profile_game_2">Игра 2</string>
+    <string name="dolby_mode_category">Режим Dolby</string>
+    <string name="dolby_profile_dynamic">Динамичен</string>
     <string name="dolby_profile_movie">Филм</string>
     <string name="dolby_profile_music">Музика</string>
-    <string name="dolby_profile_off">Без профил</string>
-    <string name="dolby_profile_spacial_audio">Специално аудио</string>
-    <string name="dolby_profile_voice">Глас</string>
+    <string name="dolby_preset_none">Няма</string>
+    <string name="dolby_preset_detailed">Подробно</string>
+    <string name="dolby_preset_balanced">Балансирано</string>
+    <string name="dolby_preset_warm">Топла</string>
+    <string name="dolby_dialogue_enhancer_title">Подобряване на речта</string>
+    <string name="dolby_geq_title">Еквалайзер</string>
+    <string name="dolby_geq_reset">Нулиране</string>
 </resources>

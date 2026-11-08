@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dolby_enable_title">Activează Dolby Atmos</string>
-    <string name="dolby_top_intro_summary">Experimentați un audio revoluționar pentru redarea media care \"curge\" deasupra și dedesubtul dvs.</string>
-    <string name="dolby_profile_auto">Auto</string>
-    <string name="dolby_profile_game">Joc</string>
-    <string name="dolby_profile_game_1">Joc 1</string>
-    <string name="dolby_profile_game_2">Joc 2</string>
+    <string name="dolby_mode_category">Mod Dolby</string>
+    <string name="dolby_profile_dynamic">Dinamic</string>
     <string name="dolby_profile_movie">Film</string>
     <string name="dolby_profile_music">Muzică</string>
-    <string name="dolby_profile_off">Niciun profil</string>
-    <string name="dolby_profile_spacial_audio">Audio spațial</string>
-    <string name="dolby_profile_voice">Voce</string>
+    <string name="dolby_preset_none">Fără</string>
+    <string name="dolby_preset_detailed">Detaliat</string>
+    <string name="dolby_preset_balanced">Echilibrat</string>
+    <string name="dolby_preset_warm">Cald</string>
+    <string name="dolby_dialogue_enhancer_title">Amplificator dialog</string>
+    <string name="dolby_geq_title">Egalizator</string>
+    <string name="dolby_geq_reset">Resetează</string>
 </resources>

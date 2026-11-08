@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dolby_enable_title">Slå på Dolby Atmos</string>
-    <string name="dolby_top_intro_summary">Opplev banebrytande lyd for medieavspeling som flyt over og rundt deg</string>
-    <string name="dolby_profile_auto">Auto</string>
-    <string name="dolby_profile_game">Spel</string>
-    <string name="dolby_profile_game_1">Spel 1</string>
-    <string name="dolby_profile_game_2">Spel 2</string>
+    <string name="dolby_mode_category">Dolby-modus</string>
+    <string name="dolby_profile_dynamic">Dynamisk</string>
     <string name="dolby_profile_movie">Film</string>
     <string name="dolby_profile_music">Musikk</string>
-    <string name="dolby_profile_off">Ingen profil</string>
-    <string name="dolby_profile_spacial_audio">Romleg lyd</string>
-    <string name="dolby_profile_voice">Tale</string>
+    <string name="dolby_preset_none">Ingen</string>
+    <string name="dolby_preset_detailed">Detaljert</string>
+    <string name="dolby_preset_balanced">Balansert</string>
+    <string name="dolby_preset_warm">Varm</string>
+    <string name="dolby_dialogue_enhancer_title">Dialogforbetrar</string>
+    <string name="dolby_geq_title">Utjamnar</string>
+    <string name="dolby_geq_reset">Tilbakestill</string>
 </resources>

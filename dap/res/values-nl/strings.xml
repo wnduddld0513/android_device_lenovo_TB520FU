@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dolby_enable_title">Dolby Atmos inschakelen</string>
-    <string name="dolby_top_intro_summary">Ervaar de doorbraakaudio voor het afspelen van media die boven en om je heen stromen</string>
-    <string name="dolby_profile_auto">Automatisch</string>
-    <string name="dolby_profile_game">Spel</string>
-    <string name="dolby_profile_game_1">Spel 1</string>
-    <string name="dolby_profile_game_2">Spel 2</string>
+    <string name="dolby_mode_category">Dolby-werkstand</string>
+    <string name="dolby_profile_dynamic">Dynamisch</string>
     <string name="dolby_profile_movie">Film</string>
     <string name="dolby_profile_music">Muziek</string>
-    <string name="dolby_profile_off">Geen profiel</string>
-    <string name="dolby_profile_spacial_audio">Ruimtelijke audio</string>
-    <string name="dolby_profile_voice">Stem</string>
+    <string name="dolby_preset_none">Geen</string>
+    <string name="dolby_preset_detailed">Gedetailleerd</string>
+    <string name="dolby_preset_balanced">Gebalanceerd</string>
+    <string name="dolby_preset_warm">Warm</string>
+    <string name="dolby_dialogue_enhancer_title">Dialogue-enhancer</string>
+    <string name="dolby_geq_title">Equalizer</string>
+    <string name="dolby_geq_reset">Resetten</string>
 </resources>
