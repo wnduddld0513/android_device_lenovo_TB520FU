@@ -82,14 +82,6 @@ $(call soong_config_set_bool,livedisplay_sysfs,enable_ab,true)
 
 # Init
 PRODUCT_PACKAGES += \
-    fstab.zram.0 \
-    fstab.zram.2 \
-    fstab.zram.4 \
-    fstab.zram.6 \
-    fstab.zram.8 \
-    fstab.zram.12 \
-    fstab.zram.16 \
-    init.lenovo.zram.rc \
     ueventd.TB520FU.rc
 
 # Kernel

@@ -19,10 +19,6 @@
          overlays only carry 240 (FrameworksResCommon_Sys, FrameworksResTarget_Vendor). -->
     <integer name="config_defaultPeakRefreshRate">120</integer>
 
-    <!-- Memory extension: let StorageManagerService schedule the zram
-         writeback job (the backing file comes from fstab.zram.N) -->
-    <bool name="config_zramWriteback">true</bool>
-
     <!-- Color modes (Settings > Display > Colors): Natural, Boosted, Adaptive.
          Adaptive (persist.sys.sf.native_mode=2, system_ext.prop) is the default.
          The stock ZUI list (FrameworksResCommon_Sys) is the same three modes
