@@ -1,3 +1,8 @@
+#
+# SPDX-FileCopyrightText: The LineageOS Project
+# SPDX-License-Identifier: Apache-2.0
+#
+
 service vendor.health-recovery /system/bin/hw/android.hardware.health-service.lenovo_recovery
     class hal
     seclabel u:r:hal_health_default:s0

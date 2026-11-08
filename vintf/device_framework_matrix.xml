@@ -1,3 +1,7 @@
+<!--
+     SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
 <compatibility-matrix version="1.0" type="framework">
     <!-- Goodix fingerprint daemon interface, declared by the stock
          fingerprint-example.xml fragment next to IFingerprint/default -->
