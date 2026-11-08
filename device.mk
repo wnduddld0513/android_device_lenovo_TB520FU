@@ -104,13 +104,10 @@ DEVICE_PACKAGE_OVERLAYS += \
 
 PRODUCT_ENFORCE_RRO_TARGETS := *
 PRODUCT_PACKAGES += \
-    ApertureResTarget \
     FrameworksResCommon_Sys \
     FrameworksResTarget_Vendor \
     LapisRowFrameworksOverlay \
     LapisRowWifiResOverlay \
-    SettingsProviderResTarget \
-    SettingsResTarget \
     WifiResCommon_Sys \
     WifiResTarget
 
