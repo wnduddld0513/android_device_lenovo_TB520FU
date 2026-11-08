@@ -3,8 +3,10 @@
      SPDX-FileCopyrightText: The LineageOS Project
      SPDX-License-Identifier: Apache-2.0
 -->
-<!-- Values from the stock ZUI ROW Wi-Fi overlay
-     (product/overlay/LapisRowWifiResOverlay.apk). -->
+<!-- Values from the stock Lenovo ROW Wi-Fi overlay
+     LapisRowWifiResOverlay (product/overlay/LapisRowWifiResOverlay.apk).
+     Module and package name are ours, so this overlay does not pretend to
+     be the Lenovo apk. -->
 <resources>
     <bool name="config_wifi6ghzSupport">true</bool>
     <bool name="config_wifiBridgedSoftApSupported">false</bool>

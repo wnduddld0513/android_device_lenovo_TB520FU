@@ -4,6 +4,6 @@
 //
 
 runtime_resource_overlay {
-    name: "LapisRowWifiResOverlay",
+    name: "FrameworksResLenovo",
     product_specific: true,
 }

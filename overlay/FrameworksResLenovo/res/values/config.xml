@@ -3,8 +3,10 @@
      SPDX-FileCopyrightText: The LineageOS Project
      SPDX-License-Identifier: Apache-2.0
 -->
-<!-- Values from the stock ZUI ROW framework overlay
-     (product/overlay/LapisRowFrameworksOverlay.apk). -->
+<!-- Values from the stock Lenovo ROW framework overlay
+     LapisRowFrameworksOverlay (product/overlay/LapisRowFrameworksOverlay.apk).
+     Module and package name are ours, so this overlay does not pretend to
+     be the Lenovo apk. -->
 <resources>
     <!-- Brightness -->
     <bool name="config_automatic_brightness_available">true</bool>
