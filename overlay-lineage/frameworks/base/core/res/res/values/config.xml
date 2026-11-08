@@ -32,17 +32,171 @@
         <item>3</item>
     </integer-array>
 
-    <!-- Display white balance is NOT enabled: the stock ZUI firmware does not
-         configure it (no overlay in /product/overlay or /vendor/overlay sets any
-         config_displayWhiteBalance* resource, so the stock framework uses the AOSP
-         defaults config_displayWhiteBalanceAvailable=false and
-         config_displayWhiteBalanceEnabledDefault=false).  With it enabled the
-         tcs3408 RGB sensor drove a global colour matrix that dimmed R/G by ~8%
-         (dumpsys color_display: mCurrentColorTemperature=6843,
-         mMatrixDisplayWhiteBalance=0.923782/0.910456; the same matrix is applied by
-         SurfaceFlinger as colorTransformMatrix), i.e. a greenish cast and a dimmer
-         picture than stock.  The panel's own calibration is what stock shows, which
-         is also what the "Natural" colour mode is supposed to look like. -->
+    <!-- Display white balance: the "Adapt color to environment" feature
+         (Settings > Display, com.lenovo.settings.display.AutoColorPreferenceController,
+         Settings.System "auto_color_temperature").
+
+         Stock does not use this AOSP controller at all.  ZuiDisplayService
+         (com.android.server.display, services.jar classes2.dex) observes
+         auto_color_temperature through ZuiDisplayService$SettingsObserver and
+         registers a SensorEventListener for the qti.sensor.rgb sensor - type
+         0x1fa2639 = 33171001, "tcs3408 RGB Sensor" (ams AG), values[0] = ambient
+         colour temperature in Kelvin, values[1] = lux (ZUI reads values[3..5] as
+         the raw R/G/B channels).  AutoEnvironmentBrightness averages the last 10
+         events, maps the ambient CCT to a display CCT with
+         AutoColorTempUtil.convertAmbient2Screen (bucket centres 3000/4000/5000/
+         6000/7000/8000 K -> 5800/6100/6500/7100/7800/8500/9500, with hysteresis
+         on the current bucket; average lux < 50 -> 6500, > 1000 -> 7500), and
+         applies a per-panel diagonal gain matrix from getNormalMatrix(cct,
+         screenSupplyProduct), animated over 2000 ms, through
+         DisplayTransformManager.setColorMatrix(0x41, matrix) to SurfaceFlinger.
+
+         Those stock bucket labels are NOT display colour temperatures.  On the
+         TIANMA panel (/proc/cmdline: mdss_dsi_panel_lapis_tianma_nt36532_dsc_3k_video,
+         i.e. AutoEnvironmentBrightness.SCREEN_PRODUCT_TIANMA) the table is
+         5800:(1.0,0.92,0.81) 6100:(1.0,0.92,0.84) 6500:(1.0,0.94,0.874)
+         7100:(1.0,0.95,0.918) 7800:(1.0,0.97,0.966) 8500:(0.998,0.972,1.0)
+         9500:(0.95,0.938,1.0): relative to its 7800 bucket the whole stock curve
+         moves the white point only between ~5600 K and ~6700 K, leaving R at 1.0
+         up to 7800 K and cutting G by <=5% and B by <=16%.  Feeding the labels to
+         this controller as display CCTs (the removed config here: 5800..9500) made
+         DisplayWhiteBalanceTintController adapt the white point to the real
+         Planckian locus at 7800..9500 K, which with the AOSP sRGB primaries is
+         R -7%..-15% and G -13%..-23% (peak-white normalised) - i.e. the greenish,
+         dimmer picture in the old note and in 57bd89a.
+
+         Two more things made that config misbehave, both fixed here:
+         - It kept the AOSP nominal white (D65 coordinates with
+           config_displayWhiteBalanceDisplayNominalWhiteCct=6500).  D65 is not on
+           the Planckian locus, so "6500" already applied R +4.3% (a pink cast)
+           whenever white balance was active.  The nominal white below is the
+           6500 K point of ColorSpace.cctToXyz itself, so 6500 K - the CCT the
+           stock table leaves untouched - is an exact no-op matrix.
+         - It set no config_displayWhiteBalance*Strong* tables, and
+           DisplayPowerController enables strong mode for the idle brightness mode
+           (DisplayPowerController.setDwbcStrongMode), where a null mapping means
+           the raw ambient CCT is used.  The strong tables repeat the normal ones
+           so idle mode cannot fall back to the raw sensor value.
+
+         config_displayWhiteBalanceDisplayColorTemperatures is the stock curve
+         re-fitted to this controller: for each stock bucket the AOSP matrix at
+         the given CCT reproduces the bucket's G and B gains (relative to the
+         untouched 7800 bucket) within ~1.5%:
+           ambient 2800 -> 5810 (R .931 G .936 B .841; stock rel. G .949 B .839)
+           ambient 3500 -> 5934 (R .944 G .948 B .870; stock rel. G .949 B .870)
+           ambient 4500 -> 6088 (R .959 G .962 B .906; stock rel. G .969 B .905)
+           ambient 5500 -> 6281 (R .978 G .980 B .951; stock rel. G .979 B .950)
+           ambient 6500 -> 6500 (no-op; stock's untouched 7800 bucket is
+                                 (1.0, 0.97, 0.966), i.e. <=3.4% warmer)
+           ambient 7500 -> 6500 (stock 8500 wants B 1.035, above the peak-white
+                                 normalisation, so it stays at no-op)
+           ambient 8500 -> 6710 (R .974 G .972 B .998; stock rel. R .95 G .967)
+         Worst case is the warmest point, relative luminance 0.928 - the same 7%
+         as the stock 5800 bucket (0.929) - and the coolest is 0.974, so the panel
+         is never yellow, red, green or noticeably dimmer.  The ambient lux rules
+         are stock's (neutral below 50 lux, untouched above 1000 lux), the CCT
+         clamp keeps the linear extrapolation of the spline inside the fitted
+         range, and 250 ms sensor rate / throttler / transition times keep the
+         AOSP defaults.
+
+         No config_displayWhiteBalanceDisplayPrimaries override: AOSP falls back
+         to its sRGB/D65 primaries (SurfaceFlinger has no panel identification
+         data here, "screenPartStatus=UNSUPPORTED"), and the adaptation is
+         relative so the primaries only scale the step sizes. -->
+    <bool name="config_displayWhiteBalanceAvailable">true</bool>
+    <!-- On by default, like the stock setting -->
+    <bool name="config_displayWhiteBalanceEnabledDefault">true</bool>
+    <string name="config_displayWhiteBalanceColorTemperatureSensorName" translatable="false">qti.sensor.rgb</string>
+    <integer name="config_displayWhiteBalanceColorTemperatureMin">5800</integer>
+    <integer name="config_displayWhiteBalanceColorTemperatureMax">6750</integer>
+    <!-- 6500 K Planckian white of ColorSpace.cctToXyz (x 0.31349, y 0.32366);
+         with the AOSP config_displayWhiteBalanceDisplayNominalWhiteCct=6500 this
+         makes 6500 K an identity matrix. -->
+    <string-array name="config_displayWhiteBalanceDisplayNominalWhite">
+        <item>0.968583</item>
+        <item>1.000000</item>
+        <item>1.121055</item>
+    </string-array>
+    <array name="config_displayWhiteBalanceAmbientColorTemperatures">
+        <item>2800.0</item>
+        <item>3500.0</item>
+        <item>4500.0</item>
+        <item>5500.0</item>
+        <item>6500.0</item>
+        <item>7500.0</item>
+        <item>8500.0</item>
+    </array>
+    <array name="config_displayWhiteBalanceDisplayColorTemperatures">
+        <item>5810.0</item>
+        <item>5934.0</item>
+        <item>6088.0</item>
+        <item>6281.0</item>
+        <item>6500.0</item>
+        <item>6500.0</item>
+        <item>6710.0</item>
+    </array>
+    <array name="config_displayWhiteBalanceStrongAmbientColorTemperatures">
+        <item>2800.0</item>
+        <item>3500.0</item>
+        <item>4500.0</item>
+        <item>5500.0</item>
+        <item>6500.0</item>
+        <item>7500.0</item>
+        <item>8500.0</item>
+    </array>
+    <array name="config_displayWhiteBalanceStrongDisplayColorTemperatures">
+        <item>5810.0</item>
+        <item>5934.0</item>
+        <item>6088.0</item>
+        <item>6281.0</item>
+        <item>6500.0</item>
+        <item>6500.0</item>
+        <item>6710.0</item>
+    </array>
+    <!-- Stock holds the neutral bucket below 50 lux (average of 10 samples) -->
+    <array name="config_displayWhiteBalanceLowLightAmbientBrightnesses">
+        <item>40.0</item>
+        <item>50.0</item>
+    </array>
+    <array name="config_displayWhiteBalanceLowLightAmbientBiases">
+        <item>0.0</item>
+        <item>1.0</item>
+    </array>
+    <item name="config_displayWhiteBalanceLowLightAmbientColorTemperature" format="float" type="dimen">6088.0</item>
+    <array name="config_displayWhiteBalanceLowLightAmbientBrightnessesStrong">
+        <item>40.0</item>
+        <item>50.0</item>
+    </array>
+    <array name="config_displayWhiteBalanceLowLightAmbientBiasesStrong">
+        <item>0.0</item>
+        <item>1.0</item>
+    </array>
+    <item name="config_displayWhiteBalanceLowLightAmbientColorTemperatureStrong" format="float" type="dimen">6088.0</item>
+    <!-- Stock leaves the panel untouched above 1000 lux -->
+    <array name="config_displayWhiteBalanceHighLightAmbientBrightnesses">
+        <item>900.0</item>
+        <item>1000.0</item>
+    </array>
+    <array name="config_displayWhiteBalanceHighLightAmbientBiases">
+        <item>0.0</item>
+        <item>1.0</item>
+    </array>
+    <item name="config_displayWhiteBalanceHighLightAmbientColorTemperature" format="float" type="dimen">6500.0</item>
+    <array name="config_displayWhiteBalanceHighLightAmbientBrightnessesStrong">
+        <item>900.0</item>
+        <item>1000.0</item>
+    </array>
+    <array name="config_displayWhiteBalanceHighLightAmbientBiasesStrong">
+        <item>0.0</item>
+        <item>1.0</item>
+    </array>
+    <item name="config_displayWhiteBalanceHighLightAmbientColorTemperatureStrong" format="float" type="dimen">6500.0</item>
+    <!-- Stock animates every colour temperature change over 2000 ms
+         (AutoEnvironmentBrightness.updateColorTempByAnimation).  AOSP defaults
+         to 1000 ms up and 40000 ms down, which would leave the panel warm for
+         ~40 s after the light gets cooler. -->
+    <integer name="config_displayWhiteBalanceTransitionTimeIncrease">2000</integer>
+    <integer name="config_displayWhiteBalanceTransitionTimeDecrease">2000</integer>
 
     <!-- WiFi Display (Miracast) through the QTI session (WfdCommon) -->
     <bool name="config_enableWifiDisplay">true</bool>
