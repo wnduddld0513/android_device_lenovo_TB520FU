@@ -15,7 +15,7 @@ $(call inherit-product, vendor/lineage/config/common_full_tablet_wifionly.mk)
 
 PRODUCT_NAME := lineage_TB520FU
 PRODUCT_DEVICE := TB520FU
-PRODUCT_MANUFACTURER := Lenovo
+PRODUCT_MANUFACTURER := LENOVO
 PRODUCT_BRAND := Lenovo
 PRODUCT_MODEL := TB520FU
 PRODUCT_CHARACTERISTICS := nosdcard,tablet
