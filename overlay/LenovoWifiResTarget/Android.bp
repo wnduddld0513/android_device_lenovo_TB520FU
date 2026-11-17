@@ -4,6 +4,6 @@
 //
 
 runtime_resource_overlay {
-    name: "WifiResLenovo",
+    name: "LenovoWifiResTarget",
     product_specific: true,
 }

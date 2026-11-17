@@ -4,6 +4,6 @@
 //
 
 runtime_resource_overlay {
-    name: "FrameworksResLenovo",
+    name: "LenovoFrameworksResTarget",
     product_specific: true,
 }

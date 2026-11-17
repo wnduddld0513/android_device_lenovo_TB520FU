@@ -102,10 +102,10 @@ DEVICE_PACKAGE_OVERLAYS += \
 PRODUCT_ENFORCE_RRO_TARGETS := *
 PRODUCT_PACKAGES += \
     FrameworksResCommon_Sys \
-    FrameworksResLenovo \
     FrameworksResTarget_Vendor \
+    LenovoFrameworksResTarget \
+    LenovoWifiResTarget \
     WifiResCommon_Sys \
-    WifiResLenovo \
     WifiResTarget
 
 # The NT36532 touch IC is flashless: nvt_36xxx downloads this firmware 5 s
