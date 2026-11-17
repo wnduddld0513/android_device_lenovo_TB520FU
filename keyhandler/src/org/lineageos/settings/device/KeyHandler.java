@@ -60,7 +60,7 @@ import com.android.internal.os.DeviceKeyHandler;
  * Double tap to wake: see DoubleTapToWake.
  */
 public class KeyHandler implements DeviceKeyHandler {
-    private static final String TAG = "TB520FUFolio";
+    private static final String TAG = "KeyHandler";
 
     private static final int TYPE_HALL_EFFECT = 33171002;
     private static final float COVERED_MAX_LUX = 20f;

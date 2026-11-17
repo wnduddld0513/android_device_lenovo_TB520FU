@@ -31,7 +31,7 @@ import java.io.IOException;
  * user here, like PowerManagerService does.
  */
 final class DoubleTapToWake {
-    private static final String TAG = "TB520FUDoubleTap";
+    private static final String TAG = "DoubleTapToWake";
     private static final String GESTURE_CONTROL = "/proc/gesture_control";
 
     private final Context mContext;
