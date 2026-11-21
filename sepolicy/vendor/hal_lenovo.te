@@ -1,8 +1,8 @@
 # SPDX-FileCopyrightText: 2026 The LineageOS Project
 # SPDX-License-Identifier: Apache-2.0
 
-# Lenovo vendor HALs (vendor.lenovo.hardware.*), stock AIDL services.
-# Types and rules follow the stock vendor policy.
+# Lenovo vendor HALs (vendor.lenovo.hardware.*), AIDL services.
+# Service types and the binder rules between their clients and servers.
 
 hal_attribute(lenovobattery)
 hal_attribute(lenovodisplay)
@@ -47,7 +47,7 @@ allow hal_lenovobattery_default sysfs:dir r_dir_perms;
 allow hal_lenovobattery_default sysfs:file rw_file_perms;
 
 # Display: panel CABC and HBM (panel0-backlight cabc_mode / hbm). The DP
-# resolution calls of the stock HAL are not used, so it gets no other sysfs.
+# resolution calls are not used, so it gets no other sysfs.
 type hal_lenovodisplay_default, domain;
 hal_server_domain(hal_lenovodisplay_default, hal_lenovodisplay)
 type hal_lenovodisplay_default_exec, exec_type, vendor_file_type, file_type;

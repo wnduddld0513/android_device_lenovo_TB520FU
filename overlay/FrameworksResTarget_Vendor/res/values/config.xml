@@ -3,8 +3,8 @@
      SPDX-FileCopyrightText: 2026 The LineageOS Project
      SPDX-License-Identifier: Apache-2.0
 -->
-<!-- Values from the stock vendor framework overlay
-     (vendor/overlay/FrameworksResTarget_Vendor.apk). -->
+<!-- Vendor framework resource overlay: power/suspend, navigation bar and
+     audio jack. -->
 <resources>
     <bool name="config_powerDecoupleAutoSuspendModeFromDisplay">true</bool>
     <bool name="config_showNavigationBar">true</bool>

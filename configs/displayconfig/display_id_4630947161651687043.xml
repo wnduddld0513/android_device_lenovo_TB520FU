@@ -2,14 +2,11 @@
 <!--
      Display configuration of the built-in panel of the Lenovo Yoga Tab Plus.
 
-     This is the stock ZUI 18.5.10.037 file
-     /vendor/etc/displayconfig/display_id_4630947039571902851.xml (the display id in
-     the name differs because our kernel derives it from the DT panel node, not from
-     the stock panel driver), copied verbatim so the brightness curve, the HDR/HBM
-     boost and the brightness ramps of the panel are exactly the ones the stock
-     firmware uses. Do not "tidy" the values: 782.4283 nits is the peak the panel
-     really reaches at value 1.0, and the 51 points are the measured backlight
-     table, not a nits-per-value guess.
+     Brightness curve, HDR/HBM boost and brightness ramps of the panel. The
+     display id in the file name is derived from the DT panel node. Do not
+     "tidy" the values: 782.4283 nits is the peak the panel really reaches at
+     value 1.0, and the 51 points are the measured backlight table, not a
+     nits-per-value guess.
 
 Copyright (c) 2023, The Linux Foundation. All rights reserved.
 

@@ -1,4 +1,4 @@
-# Dolby DAX3 (vendor.dolby.hardware.dms@2.0), HIDL, from the stock vendor policy.
+# Dolby DAX3 (vendor.dolby.hardware.dms@2.0), HIDL.
 hal_attribute(dms)
 
 type hal_dms_hwservice, hwservice_manager_type;

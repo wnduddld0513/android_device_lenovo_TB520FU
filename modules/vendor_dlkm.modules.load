@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # Modules loaded from vendor_dlkm by vendor_modprobe.sh (modules.load).
-# Stock order, without the stock modules that have no published source.
+# Load order; modules whose source is not published are not built.
 msm_sysstats.ko
 msm_show_resume_irq.ko
 mhi.ko

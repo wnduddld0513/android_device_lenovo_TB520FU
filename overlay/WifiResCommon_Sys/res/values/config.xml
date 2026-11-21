@@ -3,13 +3,11 @@
      SPDX-FileCopyrightText: 2026 The LineageOS Project
      SPDX-License-Identifier: Apache-2.0
 -->
-<!-- Stock QSSI common Wi-Fi values (product/overlay/WifiResCommon_Sys.apk),
-     where they differ from the defaults: larger TCP send buffers (4 MiB max),
-     country code from driver regulatory events, SoftAP features, connected MAC
-     randomization.  The stock overlay sets
-     config_wifiUpdateCountryCodeFromScanResultGeneric to true on top of the
-     framework default of false; it is left out here (as it is not overridden
-     today), so the framework default false stands. -->
+<!-- QSSI common Wi-Fi values where they differ from the defaults: larger TCP
+     send buffers (4 MiB max), country code from driver regulatory events,
+     SoftAP features, connected MAC randomization.
+     config_wifiUpdateCountryCodeFromScanResultGeneric is left at the framework
+     default false (it would update the country code from scan results). -->
 <resources>
     <bool name="config_wifiAllowMultipleNetworksOnSameAwareNdi">true</bool>
     <bool name="config_wifiDriverSupportedNl80211RegChangedEvent">true</bool>

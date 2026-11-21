@@ -28,8 +28,8 @@ PRODUCT_VENDOR_PROPERTIES += \
 # Dalvik
 $(call inherit-product, frameworks/native/build/tablet-10in-xhdpi-2048-dalvik-heap.mk)
 
-# WiFi Display (Miracast): the stock QTI session (proprietary-files.txt) with
-# the QTI display config clients built from source
+# WiFi Display (Miracast): the QTI session from the blobs
+# (proprietary-files.txt) with the QTI display config clients built from source
 PRODUCT_PACKAGES += \
     libdisplayconfig.system.qti \
     vendor.display.config@2.0 \
@@ -40,12 +40,12 @@ PRODUCT_SYSTEM_EXT_PROPERTIES += \
     persist.debug.wfd.enable=1 \
     persist.sys.wfd.virtual=0
 
-# Dolby Vision playback service (stock app, proprietary-files.txt)
+# Dolby Vision playback service (prebuilt app, proprietary-files.txt)
 PRODUCT_PACKAGES += \
     DolbyVisionService
 
 # Dolby Atmos settings (DAP): on/off, profile and Quick Settings tile for
-# the stock DAX3 DAP effect (vendor/lib64/soundfx/libswdap.so)
+# the DAX3 DAP effect (vendor/lib64/soundfx/libswdap.so)
 PRODUCT_PACKAGES += \
     LenovoDAP
 
@@ -62,7 +62,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/pen/default-permissions/org.lineageos.pen.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/default-permissions/org.lineageos.pen.xml
 
-# Stock Lenovo keyboard keylayouts and input device configurations
+# Lenovo keyboard keylayouts and input device configurations
 PRODUCT_COPY_FILES += \
     $(call find-copy-subdir-files,*.kl,device/lenovo/TB520FU/configs/keylayout,$(TARGET_COPY_OUT_VENDOR)/usr/keylayout) \
     $(call find-copy-subdir-files,*.idc,device/lenovo/TB520FU/configs/idc,$(TARGET_COPY_OUT_VENDOR)/usr/idc)
@@ -101,8 +101,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/modules/system_dlkm.modules.blocklist:$(TARGET_COPY_OUT_VENDOR_DLKM)/lib/modules/system_dlkm.modules.blocklist
 
-# Overlays: one runtime resource overlay per stock ZUI overlay the values come
-# from (product/overlay, vendor/overlay), plus the LineageOS-only values under
+# Overlays: one runtime resource overlay per overlay package
+# (product/overlay, vendor/overlay), plus the LineageOS-only values under
 # overlay-lineage
 DEVICE_PACKAGE_OVERLAYS += \
     $(LOCAL_PATH)/overlay-lineage

@@ -3,10 +3,7 @@
      SPDX-FileCopyrightText: 2026 The LineageOS Project
      SPDX-License-Identifier: Apache-2.0
 -->
-<!-- Values from the stock Lenovo ROW Wi-Fi overlay
-     LapisRowWifiResOverlay (product/overlay/LapisRowWifiResOverlay.apk).
-     Module and package name are ours, so this overlay does not pretend to
-     be the Lenovo apk. -->
+<!-- Wi-Fi resource overlay: 6 GHz, SoftAP and P2P values. -->
 <resources>
     <bool name="config_wifi6ghzSupport">true</bool>
     <bool name="config_wifiBridgedSoftApSupported">false</bool>

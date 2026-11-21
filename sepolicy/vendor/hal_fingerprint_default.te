@@ -1,9 +1,8 @@
-# Goodix fingerprint HAL (android.hardware.biometrics.fingerprint-service.gf),
-# rules from the stock vendor policy.
+# Goodix fingerprint HAL (android.hardware.biometrics.fingerprint-service.gf).
 type goodix_fingerprint_service, service_manager_type;
 
 allow hal_fingerprint_default goodix_fp_device:chr_file rw_file_perms;
-# The Goodix HAL lists / at start (stock allows the same).
+# The Goodix HAL lists / at start.
 allow hal_fingerprint_default rootfs:dir read;
 allow hal_fingerprint_default tee_device:chr_file rw_file_perms;
 allow hal_fingerprint_default uhid_device:chr_file rw_file_perms;

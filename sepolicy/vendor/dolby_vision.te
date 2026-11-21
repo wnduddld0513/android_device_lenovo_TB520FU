@@ -1,4 +1,4 @@
-# Dolby Vision, labeled as in the stock vendor policy.
+# Dolby Vision (decoder store and DVS daemon).
 
 # Decoder Codec2 store "default8" (vendor.dolby.media.c2-service-vision)
 type vendorcodec, domain, dvs_aidl_client;

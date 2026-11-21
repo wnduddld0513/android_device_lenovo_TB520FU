@@ -16,9 +16,9 @@ TARGET_SCREEN_DENSITY := 340
 
 # DTB / DTBO
 # kernel/lenovo/sm8650-devicetrees/lenovo builds the four lapis-pineapple*
-# base dtbs of the stock vendor_boot dtb, the two board overlays of the stock
-# dtbo.img (avf-overlay, lapis-qrd-overlay) and, in lenovo/techpack, the
-# component overlays that merge_dtbs.py folds into the bases.
+# base dtbs, the two board overlays (avf-overlay, lapis-qrd-overlay) and, in
+# lenovo/techpack, the component overlays that merge_dtbs.py folds into the
+# bases.
 TARGET_MERGE_DTBS_WILDCARD := lapis-pineapple*
 TARGET_MERGE_DTBOS_WILDCARD := *-overlay
 
@@ -70,7 +70,7 @@ TARGET_KERNEL_ADDITIONAL_FLAGS := \
     BOARD_PLATFORM=pineapple \
     TARGET_BOARD_PLATFORM=pineapple
 
-# Kernel modules (stock load order and blocklists)
+# Kernel modules (load order and blocklists)
 BOARD_VENDOR_KERNEL_MODULES_BLOCKLIST_FILE := $(DEVICE_PATH)/modules/modules.blocklist
 BOARD_VENDOR_KERNEL_MODULES_LOAD := $(strip $(shell grep -h '^[A-Za-z0-9_]' $(DEVICE_PATH)/modules/vendor_dlkm.modules.load))
 

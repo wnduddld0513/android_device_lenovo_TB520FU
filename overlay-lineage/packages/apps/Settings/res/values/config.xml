@@ -4,20 +4,20 @@
      SPDX-License-Identifier: Apache-2.0
 -->
 <resources>
-    <!-- Regulatory labels: the stock e-label of TB520FU (system/etc/deviceinfo/e_label_wifi*.png) -->
+    <!-- Regulatory labels (system/etc/deviceinfo/e_label_wifi*.png) -->
     <bool name="config_show_regulatory_info">true</bool>
 
     <!-- Refresh rate (Settings > Display > Peak refresh rate).
          LineageOS ships this list disabled since AOSP only has the two-state
          "Smooth display" switch (config_show_smooth_display), which can only
-         choose between 60 Hz and the highest mode.  Stock ZUI instead lets the
-         user pick one of the rates the panel reports
+         choose between 60 Hz and the highest mode.  This list lets the user pick
+         one of the rates the panel reports
          (ro.config.lgsi.surface_flinger.available_refreshrates=30_60_90_120_144,
          default ro.config.lgsi.default_refreshrate=120), and this panel has
          exactly those five modes (dumpsys display: supportedRefreshRates
          [144.00002, 120.00001, 90.0, 60.000004, 30.000002]).
          PeakRefreshRateListPreferenceController builds its entries from
-         Display.getSupportedModes(), so enabling this bool yields stock's five
+         Display.getSupportedModes(), so enabling this bool yields the five mode
          choices: the top entry stores "Infinity" (no peak), the others store
          the rate in Settings.System.PEAK_REFRESH_RATE, which DisplayModeDirector
          applies as PRIORITY_USER_SETTING_PEAK_REFRESH_RATE (already visible in

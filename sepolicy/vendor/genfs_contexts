@@ -3,8 +3,8 @@ genfscon sysfs /devices/virtual/huaqin/interface/hw_info u:object_r:vendor_sysfs
 
 # Lenovo pogo keyboard state (keyboard HAL)
 genfscon sysfs /devices/platform/soc/soc:lenovo_kb u:object_r:vendor_sysfs_lenovo_kb:s0
-# Its wakeup source stays a wakeup node (stock does the same), else
-# system_suspend cannot read the wakeup statistics under it.
+# Its wakeup source stays a wakeup node, else system_suspend cannot read the
+# wakeup statistics under it.
 genfscon sysfs /devices/platform/soc/soc:lenovo_kb/wakeup u:object_r:sysfs_wakeup:s0
 
 # Touch panel pen id (touchscreen HAL) and double tap to wake switch (device
@@ -16,9 +16,9 @@ genfscon proc /gesture_control u:object_r:vendor_proc_lenovo_touch:s0
 # Pen/keyboard wireless charging transmitter (pen attach, MAC, Qi commands)
 genfscon sysfs /devices/platform/soc/soc:qcom,pmic_glink/soc:qcom,pmic_glink:qcom,battery_charger/power_supply/wls_tx u:object_r:vendor_sysfs_wls_tx:s0
 
-# Wakeup sources the stock vendor policy labels sysfs_wakeup; without them
-# system_suspend cannot read their statistics (genfscon is a prefix match, so
-# ".../wakeup" covers the numbered wakeupNN directories).
+# Wakeup sources labelled sysfs_wakeup; without them system_suspend cannot read
+# their statistics (genfscon is a prefix match, so ".../wakeup" covers the
+# numbered wakeupNN directories).
 genfscon sysfs /devices/platform/soc/8c0000.qcom,qupv3_2_geni_se/888000.qcom,qup_uart/wakeup u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/soc/ac0000.qcom,qupv3_1_geni_se/a90000.spi/spi_master/spi0/spi0.0/wakeup u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/soc/soc:qcom,pmic_glink/soc:qcom,pmic_glink:qcom,battery_charger/power_supply/wls_tx/wakeup u:object_r:sysfs_wakeup:s0

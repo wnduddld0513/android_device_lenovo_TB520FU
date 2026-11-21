@@ -3,10 +3,7 @@
      SPDX-FileCopyrightText: 2026 The LineageOS Project
      SPDX-License-Identifier: Apache-2.0
 -->
-<!-- Values from the stock Lenovo ROW framework overlay
-     LapisRowFrameworksOverlay (product/overlay/LapisRowFrameworksOverlay.apk).
-     Module and package name are ours, so this overlay does not pretend to
-     be the Lenovo apk. -->
+<!-- Framework resource overlay: brightness, night display and audio values. -->
 <resources>
     <!-- Brightness -->
     <bool name="config_automatic_brightness_available">true</bool>

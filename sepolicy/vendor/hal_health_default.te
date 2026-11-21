@@ -1,8 +1,7 @@
 # power_supply/wls_tx is the pen/keyboard wireless charging transmitter, not a
-# charger input. Stock leaves it unreadable for the health HAL (it labels only
-# the wakeup nodes below wls_tx), so healthd classifies it as an unknown supply
-# and BatteryService never reports "wireless powered". Keep it that way: no
-# allow for vendor_sysfs_wls_tx; the dontaudits only keep the expected denials
-# out of the log.
+# charger input. Only the wakeup nodes below wls_tx are labelled, so healthd
+# classifies wls_tx as an unknown supply and BatteryService never reports
+# "wireless powered". Keep it that way: no allow for vendor_sysfs_wls_tx; the
+# dontaudits only keep the expected denials out of the log.
 dontaudit hal_health_default vendor_sysfs_wls_tx:dir r_dir_perms;
 dontaudit hal_health_default vendor_sysfs_wls_tx:file r_file_perms;

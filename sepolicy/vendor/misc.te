@@ -14,8 +14,8 @@ dontaudit vendor_modprobe rootfs:dir read;
 
 # ueventd loads the WLAN MAC (wlan_mac.bin, firmware request of the qca_cld
 # driver) from the WLAN persist directory (kiwi_v2), which has its own label
-# here (vendor_persist_wlan_file); stock reads it as vendor_persist_file. Without
-# it the driver fell back to the default MAC (00:03:7f:...).
+# here (vendor_persist_wlan_file) instead of the generic vendor_persist_file
+# label. Without it the driver falls back to the default MAC (00:03:7f:...).
 allow ueventd vendor_persist_wlan_file:dir search;
 allow ueventd vendor_persist_wlan_file:file r_file_perms;
 

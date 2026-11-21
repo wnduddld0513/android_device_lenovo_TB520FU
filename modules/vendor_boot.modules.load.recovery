@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # Modules of the vendor_boot ramdisk (modules.load.recovery); also BOOT_KERNEL_MODULES.
-# Stock order, without the stock modules that have no published source.
+# Load order; modules whose source is not published are not built.
 gh_arm_drv.ko
 sched-walt.ko
 qcom_ipc_logging.ko

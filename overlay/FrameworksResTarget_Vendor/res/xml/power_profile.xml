@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Stock power profile (vendor FrameworksResTarget_Vendor), recovered
-     with xmltree2xml.py. Without it AOSP's placeholder (battery.capacity 2)
-     is used for battery usage estimates. -->
+<!-- Power profile of the vendor framework overlay
+     (vendor/overlay/FrameworksResTarget_Vendor.apk). Without it AOSP's
+     placeholder (battery.capacity 2) is used for battery usage estimates. -->
 <device name="Android">
     <item name="none">0</item>
     <item name="screen.on">1725.8</item>

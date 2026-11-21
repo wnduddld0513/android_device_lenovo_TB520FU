@@ -3,10 +3,10 @@
      SPDX-FileCopyrightText: 2026 The LineageOS Project
      SPDX-License-Identifier: Apache-2.0
 -->
-<!-- Values from the stock vendor Wi-Fi overlay (vendor/overlay/WifiResTarget.apk).
-     The stock manifest gates it on ro.boot.product.vendor.sku=pineapple because
-     the stock image also ships WifiResTarget_spf with the same priority; this
-     build has a single AOSP Wi-Fi resources package, so the guard is dropped. -->
+<!-- Vendor Wi-Fi overlay: Multi-STA concurrency and 802.11be SoftAP. The
+     vendor overlay manifest gates these on ro.boot.product.vendor.sku=pineapple;
+     this build has a single AOSP Wi-Fi resources package, so the guard is not
+     used. -->
 <resources>
     <bool name="config_wifiMultiStaLocalOnlyConcurrencyEnabled">true</bool>
     <bool name="config_wifiMultiStaRestrictedConcurrencyEnabled">true</bool>
