@@ -21,11 +21,14 @@
     android:versionName="1.0">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- The DAP effect is instantiated on the global output mix (session 0). -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <!-- Opens DolbyActivity in the right pane of a two-pane Settings: signature|preinstalled,
          granted because the app is platform signed and shares android.uid.system. -->
     <uses-permission android:name="android.permission.LAUNCH_MULTI_PANE_SETTINGS_DEEP_LINK" />
 
     <application
+        android:name=".DolbyApplication"
         android:defaultToDeviceProtectedStorage="true"
         android:directBootAware="true"
         android:label="@string/dolby_title"
@@ -66,6 +69,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>

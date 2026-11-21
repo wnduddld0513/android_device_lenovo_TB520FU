@@ -81,8 +81,9 @@ class DolbyFragment :
             onPreferenceChangeListener = this@DolbyFragment
         }
 
-    // GeqView in ZuiSettings draws 10 bars (X_TITLES 47, 234, 469, 844, 1K, 2K, 3K, 5K, 9K, 13K)
-    // for the 20 GraphicEqualizerBandGains entries, each between -6 and +6 dB.
+    // The equalizer has 20 GraphicEqualizerBandGains entries and the screen draws them as 10
+    // bars, each between -6 and +6 dB: bar i is gain 2i, the gains between two bars follow from
+    // the two bar values.
     private fun buildGraphicEqualizer() {
         val screen = findPreference<PreferenceScreen>(PREF_GEQ) ?: return
         for (bar in 0 until DolbyCore.GEQ_BARS) {
@@ -109,16 +110,16 @@ class DolbyFragment :
             return true
         }
         when (preference.key) {
-            PREF_DOLBY_ENABLE -> DolbyCore.setEnabled(newValue as Boolean)
+            PREF_DOLBY_ENABLE -> DolbyCore.setEnabled(newValue as Boolean, preference.context)
             PREF_DIALOG_ENHANCER -> DolbyCore.setDialogEnhancerEnabled(newValue as Boolean)
             PREF_DIALOG_AMOUNT -> DolbyCore.setDialogEnhancerAmount(newValue as Int)
             else -> {
                 if (preference.key?.startsWith(PREF_GEQ_BAR) == true) {
                     writeGeqBars()
+                    preference.context?.let { DolbyCore.persistGeq(it) }
                 }
             }
         }
-        preference.context?.let { DolbyCore.persist(it) }
         updateState()
         return true
     }
@@ -140,7 +141,7 @@ class DolbyFragment :
         if (key == PREF_GEQ_RESET) {
             DolbyCore.setGeqBars(IntArray(DolbyCore.GEQ_BARS))
             updateState()
-            requireContext().let { DolbyCore.persist(it) }
+            requireContext().let { DolbyCore.persistGeq(it) }
             return true
         }
         return false
@@ -163,10 +164,8 @@ class DolbyFragment :
             findPreference<SelectorWithWidgetPreference>(key)?.isChecked = mode == MODE_VALUES[index]
         }
 
-        // The stock screen shows the dialogue enhancer for the movie profile
-        // (DolbyVideoEnhancerPreferenceController.shouldVisible) and the music presets plus the
-        // equalizer for the music profile (DolbyMusicEffectPreferenceController.shouldVisible,
-        // DolbyMusicGeqPreferenceController.shouldVisible).
+        // The dialogue enhancer belongs to the movie profile, the presets and the equalizer to
+        // the music profile; the other profiles tune themselves.
         val movie = mode == DolbyCore.MODE_MOVIE
         val music = mode == DolbyCore.MODE_MUSIC
 
@@ -200,8 +199,8 @@ class DolbyFragment :
         const val PREF_GEQ_BAR = "dolby_geq_band"
         const val PREF_GEQ_RESET = "dolby_geq_reset"
 
-        // Order matters: the index is the stock mode value (AI_DOLBY_MODE 0, VIDEO_DOLBY_MODE 1,
-        // MUSIC_DOLBY_MODE 2) and DolbyCore.MODE_OFF for the first entry.
+        // Order matters: the index is the profile id (0 dynamic, 1 movie, 2 music) and
+        // DolbyCore.MODE_OFF for the first entry.
         val MODE_KEYS =
             arrayOf("dolby_mode_off", "dolby_mode_dynamic", "dolby_mode_movie", "dolby_mode_music")
 
@@ -222,7 +221,7 @@ class DolbyFragment :
                 "dolby_preset_warm",
             )
 
-        // GeqView.X_TITLES in ZuiSettings.
+        // Bar centre frequencies of the 10-band equalizer.
         private val GEQ_BAR_TITLES =
             arrayOf("47", "234", "469", "844", "1K", "2K", "3K", "5K", "9K", "13K")
 

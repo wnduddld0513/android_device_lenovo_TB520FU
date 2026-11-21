@@ -23,9 +23,10 @@ import android.content.Intent
 class BootCompletedReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        // The stock DAX3 service ships the effect enabled: DefaultValues.DEFAULT_DS_STATE is true
-        // in daxService.apk, and DaxService.setDaxSettingsForUser restores the persisted profile
-        // (Settings.Global "dolby_dap_profile") together with the equalizer curve.
+        // The effect starts enabled on the Dynamic profile, and the saved profile, switch state
+        // and equalizer curve go back in as soon as the audio stack is reachable: before
+        // audioserver is up there is no effect to talk to, so the second broadcast after boot
+        // repeats the same idempotent restore.
         DolbyCore.restore(context)
     }
 }

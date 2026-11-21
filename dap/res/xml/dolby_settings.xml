@@ -14,10 +14,8 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<!-- Layout of the stock screen (ZuiSettings res/xml/dolby_atmos_settings.xml): the
-     dolby_switch row, the "dolby_atmos_mode" category with its mode radios, then the
-     untitled category holding the dialogue enhancer and the music presets, and the
-     equalizer. -->
+<!-- The switch, the mode radios, then one category holding the dialogue enhancer, the
+     music presets and the equalizer. -->
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/dolby_title">
