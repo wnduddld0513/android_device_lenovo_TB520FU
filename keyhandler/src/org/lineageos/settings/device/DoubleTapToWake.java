@@ -25,10 +25,11 @@ import java.io.IOException;
  * The Novatek touch driver (nt36xxx) keeps the controller in its wakeup gesture
  * mode across suspend while /proc/gesture_control is 1, skips it while the folio
  * cover is closed, and reports a double tap as KEY_POWER. PowerManagerService
- * hands the setting to the power HAL as Mode.DOUBLE_TAP_TO_WAKE, but the stock
- * QTI power HAL does not implement it: stock ZUI switches the node through its
- * own touchscreen HAL (setDoubleGesture). So apply the setting of the current
- * user here, like PowerManagerService does.
+ * hands the setting to the power HAL as Mode.DOUBLE_TAP_TO_WAKE, but the QTI
+ * power HAL does not implement it. The vendor touchscreen HAL offers the same
+ * switch as ITouchscreen#setDoubleGesture, whose Java interface is not part of
+ * this tree, so apply the setting of the current user to the node here, the way
+ * PowerManagerService hands the setting to the power HAL.
  */
 final class DoubleTapToWake {
     private static final String TAG = "DoubleTapToWake";

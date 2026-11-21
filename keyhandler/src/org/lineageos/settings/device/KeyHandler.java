@@ -16,6 +16,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.hardware.display.DisplayManager;
+import android.hardware.input.InputManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PowerManager;
@@ -24,7 +25,12 @@ import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Display;
+import android.view.InputChannel;
+import android.view.InputEvent;
+import android.view.InputEventReceiver;
+import android.view.InputMonitor;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 
 import com.android.internal.os.DeviceKeyHandler;
 
@@ -43,21 +49,26 @@ import org.lineageos.settings.device.pen.PenUEventRelay;
  *
  * Stylus: the display driver turns the stylus scanning of the touch controller
  * off at 90 and 144 Hz (dsi_panel_match_fps_setting), but the touch controller
- * still reports a stylus near the screen with KEY_SKIN_STYLUS, which has no key
- * code. Stock raises such a display to 120 Hz with its own SurfaceFlinger pen
- * timer (ro.surface_flinger.set_pen_timer_ms), above the refresh rate the user
- * picked. Here, while the reports come and the user setting allows 90 Hz or
- * more, the user's minimum refresh rate is raised to 120 Hz, which also lifts
- * the user's peak vote to max(peak, min), and DisplayManager#requestMaxRefreshRate()
- * keeps a 144 Hz setting from going above 120 Hz. The peak refresh rate the
- * Settings list shows is left untouched. The minimum is saved first and put
- * back STYLUS_TIMEOUT_MS after the last report, like the stock pen timer; a
- * value still saved at boot or on a user switch is put back then. A 30 or 60 Hz
- * setting keeps the scanning on and is left alone. This follows the pen mode
- * of the LineageOS xiaomi pipa tree (peripheralmanager RefreshUtils), which
- * saves and rewrites the refresh rate settings while its pen is in use. The
- * panel has no VRR, so DisplayManager#requestDisplayModes() is ignored, and an
- * application frame rate vote cannot go above the user's peak.
+ * still reports the stylus entering its detection range through KEY_SKIN_STYLUS,
+ * which has no key code. The pen only works at 30, 60 and 120 Hz, and a display
+ * in the 90 and 144 Hz modes has to reach 120 Hz for it. While the user setting
+ * allows 90 Hz or more, the report raises the user's minimum refresh rate to
+ * 120 Hz, which also lifts the user's peak vote to max(peak, min), and
+ * DisplayManager#requestMaxRefreshRate() keeps a 144 Hz setting from going above
+ * 120 Hz. The peak refresh rate the Settings list shows is left untouched.
+ *
+ * The key marks one approach only, while a writing session lasts as long as the
+ * pen keeps sending motion: for as long as the raised rate is in effect, a
+ * gesture monitor of the default display watches the pen's own hover and touch
+ * events (TOOL_TYPE_STYLUS and TOOL_TYPE_ERASER) and re-arms the timeout, at
+ * most once a second. The monitor only observes; it never consumes or pilfers a
+ * pointer, and it exists only while the rate is raised.
+ *
+ * The minimum is saved first and put back STYLUS_TIMEOUT_MS after the last
+ * event; a value still saved at boot or on a user switch is put back then. A 30
+ * or 60 Hz setting keeps the scanning on and is left alone. The panel has no
+ * VRR, so DisplayManager#requestDisplayModes() is ignored, and an application
+ * frame rate vote cannot go above the user's peak.
  *
  * Double tap to wake: see DoubleTapToWake.
  *
@@ -77,6 +88,9 @@ public class KeyHandler implements DeviceKeyHandler {
     // stylus is scanned
     private static final float STYLUS_SWITCH_MIN_PEAK = 90f;
     private static final long STYLUS_TIMEOUT_MS = 10000;
+    // The pen streams motion events continuously, so the timeout does not need
+    // to be re-armed on every one of them
+    private static final long STYLUS_REARM_INTERVAL_MS = 1000;
     // Settings.Secure, per user: Settings.System.MIN_REFRESH_RATE as it was
     // before the stylus raised it
     private static final String KEY_SAVED_MIN_REFRESH_RATE = "tb520fu_stylus_min_refresh_rate";
@@ -97,6 +111,34 @@ public class KeyHandler implements DeviceKeyHandler {
     // User whose minimum refresh rate the stylus raised, USER_NULL if none
     private int mStylusUserId = UserHandle.USER_NULL;
     private final Runnable mStylusGoneRunnable = this::onStylusGone;
+    // Set only while the raised rate is in effect
+    private InputMonitor mStylusMonitor;
+    private InputEventReceiver mStylusReceiver;
+    private long mStylusRearmTime;
+
+    /**
+     * Watches the pen on the default display and keeps the raised rate alive.
+     * The events stay with the window they were sent to: a gesture monitor is a
+     * spy, and this one finishes every event as unconsumed.
+     */
+    private final class StylusEventReceiver extends InputEventReceiver {
+        StylusEventReceiver(InputChannel inputChannel, Looper looper) {
+            super(inputChannel, looper);
+        }
+
+        @Override
+        public void onInputEvent(InputEvent event) {
+            boolean stylus = false;
+            try {
+                stylus = event instanceof MotionEvent && isStylus((MotionEvent) event);
+            } finally {
+                finishInputEvent(event, false);
+            }
+            if (stylus) {
+                rearmStylusTimeout();
+            }
+        }
+    }
 
     private final SensorEventListener mHallListener = new SensorEventListener() {
         @Override
@@ -166,6 +208,15 @@ public class KeyHandler implements DeviceKeyHandler {
         }
         mSensorManager.registerListener(mHallListener, hall, SensorManager.SENSOR_DELAY_NORMAL,
                 mHandler);
+
+        // The light sensor only confirms a cover that closed on a lit screen,
+        // so stop it as soon as the screen is off
+        context.registerReceiverAsUser(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                unregisterLight();
+            }
+        }, UserHandle.ALL, new IntentFilter(Intent.ACTION_SCREEN_OFF), null, mHandler);
     }
 
     @Override
@@ -210,6 +261,7 @@ public class KeyHandler implements DeviceKeyHandler {
                     STYLUS_MIN_REFRESH_RATE, userId);
             mContext.getSystemService(DisplayManager.class).requestMaxRefreshRate(
                     Display.DEFAULT_DISPLAY, STYLUS_REFRESH_RATE);
+            startStylusMonitor();
         } catch (RuntimeException e) {
             Log.e(TAG, "Failed to raise the refresh rate for the stylus", e);
         }
@@ -217,6 +269,7 @@ public class KeyHandler implements DeviceKeyHandler {
 
     private void onStylusGone() {
         mStylusNear = false;
+        stopStylusMonitor();
         if (mStylusUserId == UserHandle.USER_NULL) {
             return;
         }
@@ -229,6 +282,72 @@ public class KeyHandler implements DeviceKeyHandler {
             Log.e(TAG, "Failed to drop the stylus refresh rate limit", e);
         }
         restoreSavedMinRefreshRate(userId);
+    }
+
+    /** Starts watching the pen; only called while the raised rate is in effect. */
+    private void startStylusMonitor() {
+        if (mStylusReceiver != null) {
+            return;
+        }
+        try {
+            final InputManager inputManager = mContext.getSystemService(InputManager.class);
+            if (inputManager == null) {
+                return;
+            }
+            final InputMonitor monitor = inputManager.monitorGestureInput("TB520FU stylus",
+                    Display.DEFAULT_DISPLAY);
+            try {
+                mStylusReceiver = new StylusEventReceiver(monitor.getInputChannel(),
+                        mHandler.getLooper());
+                mStylusMonitor = monitor;
+            } catch (RuntimeException e) {
+                monitor.dispose();
+                throw e;
+            }
+            mStylusRearmTime = SystemClock.uptimeMillis();
+        } catch (RuntimeException e) {
+            Log.w(TAG, "No stylus input monitor", e);
+            stopStylusMonitor();
+        }
+    }
+
+    private void stopStylusMonitor() {
+        final InputMonitor monitor = mStylusMonitor;
+        final InputEventReceiver receiver = mStylusReceiver;
+        mStylusMonitor = null;
+        mStylusReceiver = null;
+        // The monitor owns the input channel
+        if (monitor != null) {
+            monitor.dispose();
+        }
+        if (receiver != null) {
+            receiver.dispose();
+        }
+    }
+
+    /** The pen keeps writing; push the end of the raised rate back. */
+    private void rearmStylusTimeout() {
+        if (mStylusReceiver == null) {
+            return;
+        }
+        final long now = SystemClock.uptimeMillis();
+        if (now - mStylusRearmTime < STYLUS_REARM_INTERVAL_MS) {
+            return;
+        }
+        mStylusRearmTime = now;
+        mHandler.removeCallbacks(mStylusGoneRunnable);
+        mHandler.postDelayed(mStylusGoneRunnable, STYLUS_TIMEOUT_MS);
+    }
+
+    private static boolean isStylus(MotionEvent event) {
+        for (int i = 0; i < event.getPointerCount(); i++) {
+            final int toolType = event.getToolType(i);
+            if (toolType == MotionEvent.TOOL_TYPE_STYLUS
+                    || toolType == MotionEvent.TOOL_TYPE_ERASER) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

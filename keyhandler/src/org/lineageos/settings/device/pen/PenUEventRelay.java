@@ -81,8 +81,10 @@ public final class PenUEventRelay {
 
     public void start() {
         mObserver.startObserving(PenConstants.UEVENT_MATCH);
+        // The pen app is another app, so the query arrives from outside this
+        // package; the signature permission keeps every other one out.
         mContext.registerReceiver(mQueryReceiver, new IntentFilter(ACTION_QUERY),
-                PenConstants.PERMISSION, mHandler);
+                PenConstants.PERMISSION, mHandler, Context.RECEIVER_EXPORTED);
     }
 
     private void send(String type, String mac, String attached, String level, String charging) {
