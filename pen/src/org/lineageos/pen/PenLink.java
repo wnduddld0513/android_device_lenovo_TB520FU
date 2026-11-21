@@ -15,6 +15,7 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothHidHost;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
@@ -38,14 +39,17 @@ import java.util.UUID;
  * not bonded yet gets one notification ("Pen attached" / "Tap to connect");
  * tapping it runs a directed LE scan on the reported address and calls
  * createBond(), and the standard Android pairing dialog asks for the
- * confirmation. That is the flow of the LineageOS OnePlus pen app
- * (hardware/oplus packages/Pen, PenService.kt). A bonded pen gets no
- * notification: the Bluetooth stack reconnects its HID link.
+ * confirmation. A bonded pen gets no notification: the Bluetooth stack
+ * reconnects its HID link.
  *
  * While the HID link of a Lenovo pen is up, the touch panel is told that a pen
- * is linked (setPenMode) and which pen it is (pen type), and the charging pad
- * is told to stop transmitting (402). A pen that reports "needs recharge"
- * (1029) on the Lenovo command channel makes the pad start charging it (403).
+ * is linked (setPenMode) and which pen it is (pen type); both are reset when
+ * the link goes down, and the panel is told that no pen pairing is in progress
+ * any more (setPenBle).
+ *
+ * A pen that reports "needs recharge" (1029) on the Lenovo command channel
+ * makes the charging pad start charging it (403). A linked pen that is put on
+ * the pad stops the pad receiver (402).
  */
 final class PenLink {
     private static final String TAG = "PenLink";
@@ -84,7 +88,7 @@ final class PenLink {
     private BluetoothDevice mDevice;
     private BluetoothGatt mGatt;
     private String mTargetMac;
-    private boolean mAttached;
+    private String mLinkedMac;
     private boolean mCloseRxSent;
 
     private final Runnable mScanTimeout = () -> {
@@ -103,12 +107,17 @@ final class PenLink {
             mHandler.removeCallbacks(mScanTimeout);
             stopScan();
             // The system pairing dialog asks the user, nothing is confirmed here
-            device.createBond(BluetoothDevice.TRANSPORT_LE);
+            if (!device.createBond(BluetoothDevice.TRANSPORT_LE)) {
+                Log.w(TAG, "cannot start the bond to " + mTargetMac);
+                mTargetMac = null;
+            }
         }
 
         @Override
         public void onScanFailed(int errorCode) {
             Log.w(TAG, "pairing scan failed: " + errorCode);
+            mHandler.removeCallbacks(mScanTimeout);
+            stopScan();
         }
     };
 
@@ -168,35 +177,53 @@ final class PenLink {
 
     /** The charger uevent relayed by the key handler. */
     void onUEvent(Intent intent) {
+        mHandler.post(() -> handleUEvent(intent));
+    }
+
+    private void handleUEvent(Intent intent) {
         final String type = intent.getStringExtra(PenIntents.EXTRA_TYPE);
         if (!"QI".equals(type) && !"NFC".equals(type)) {
             return;
         }
-        final String mac = intent.getStringExtra(PenIntents.EXTRA_MAC);
-        final boolean attached = "1".equals(intent.getStringExtra(PenIntents.EXTRA_ATTACHED));
-        final boolean wasAttached = mAttached;
-        mAttached = attached;
-        if (attached) {
-            mTargetMac = mac != null ? mac.toUpperCase() : null;
-            mCloseRxSent = false;
-            if (!wasAttached) {
-                mHal.setPenBle(true);
+        final String attachedValue = intent.getStringExtra(PenIntents.EXTRA_ATTACHED);
+        if (attachedValue == null) {
+            return;
+        }
+        if ("1".equals(attachedValue)) {
+            final String mac = intent.getStringExtra(PenIntents.EXTRA_MAC);
+            final String attachedMac = mac != null ? mac.toUpperCase() : null;
+            if (!isMacValid(attachedMac)) {
+                return;
             }
-            if (mTargetMac != null) {
-                promptIfUnbonded(mTargetMac);
+            mTargetMac = attachedMac;
+            // The linked pen was put on the pad: the pad receiver is shut down
+            if (mLinkedMac != null && mLinkedMac.equalsIgnoreCase(attachedMac)) {
+                closeChargingPad();
             }
+            promptIfUnbonded(attachedMac);
         } else {
             mHandler.removeCallbacks(mScanTimeout);
             stopScan();
             mNotifications.cancel();
-            if (wasAttached) {
-                mHal.setPenBle(false);
-            }
+            mTargetMac = null;
+            mCloseRxSent = false;
         }
+    }
+
+    /** A usable pen address: not the all-zero or all-ones placeholder. */
+    private static boolean isMacValid(String mac) {
+        if (mac == null || !BluetoothAdapter.checkBluetoothAddress(mac)) {
+            return false;
+        }
+        return !"00:00:00:00:00:00".equals(mac) && !"FF:FF:FF:FF:FF:FF".equals(mac);
     }
 
     /** The user tapped the pairing notification: find the pen and bond it. */
     void bond(String mac) {
+        mHandler.post(() -> startBonding(mac));
+    }
+
+    private void startBonding(String mac) {
         if (mac == null || mAdapter == null || !mAdapter.isEnabled()) {
             return;
         }
@@ -218,7 +245,10 @@ final class PenLink {
             return;
         }
         final BluetoothDevice device = remoteDevice(mac);
-        if (device != null && device.getBondState() == BluetoothDevice.BOND_BONDED) {
+        if (device == null) {
+            return;
+        }
+        if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
             Log.d(TAG, "pen " + mac + " is bonded, no pairing prompt");
             return;
         }
@@ -241,6 +271,13 @@ final class PenLink {
         if (mAdapter == null || !mAdapter.isEnabled() || mTargetMac == null) {
             return;
         }
+        final BluetoothLeScanner scanner = mAdapter.getBluetoothLeScanner();
+        if (scanner == null) {
+            Log.w(TAG, "no LE scanner, cannot scan for " + mTargetMac);
+            mTargetMac = null;
+            mHandler.removeCallbacks(mScanTimeout);
+            return;
+        }
         Log.d(TAG, "scanning for " + mTargetMac);
         final ScanFilter filter = new ScanFilter.Builder()
                 .setDeviceAddress(mTargetMac)
@@ -250,16 +287,21 @@ final class PenLink {
                 .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
                 .setLegacy(false)
                 .build();
-        mAdapter.getBluetoothLeScanner().startScan(Arrays.asList(filter), settings,
-                mScanCallback);
+        scanner.startScan(Arrays.asList(filter), settings, mScanCallback);
         mHandler.removeCallbacks(mScanTimeout);
         mHandler.postDelayed(mScanTimeout, SCAN_TIMEOUT_MS);
     }
 
     private void stopScan() {
-        if (mAdapter != null && mAdapter.isEnabled()) {
-            mAdapter.getBluetoothLeScanner().stopScan(mScanCallback);
+        if (mAdapter == null || !mAdapter.isEnabled()) {
+            return;
         }
+        final BluetoothLeScanner scanner = mAdapter.getBluetoothLeScanner();
+        if (scanner == null) {
+            Log.w(TAG, "no LE scanner, no scan to stop");
+            return;
+        }
+        scanner.stopScan(mScanCallback);
     }
 
     private void onHidStateChanged(Intent intent) {
@@ -268,20 +310,32 @@ final class PenLink {
         if (device == null) {
             return;
         }
-        final int penType = penTypeByName(device.getName());
-        if (penType == PEN_TYPE_NONE) {
-            return;
-        }
         final int state = intent.getIntExtra(BluetoothProfile.EXTRA_STATE,
                 BluetoothProfile.STATE_DISCONNECTED);
         Log.d(TAG, "pen hid state " + state);
         if (state == BluetoothProfile.STATE_CONNECTED) {
+            if (TextUtils.equals(device.getAddress(), mTargetMac)) {
+                // The pen that was being paired is up, the scan is over
+                mHandler.removeCallbacks(mScanTimeout);
+                stopScan();
+                mTargetMac = null;
+                mNotifications.cancel();
+            }
+            final int penType = penTypeByName(device.getName());
+            if (penType == PEN_TYPE_NONE) {
+                return;
+            }
+            mLinkedMac = device.getAddress();
+            openGatt(device);
             mHal.setPenMode(true);
             mHal.setPenType(touchPenType(penType));
-            closeChargingPad();
-            openGatt(device);
-        } else if (state == BluetoothProfile.STATE_DISCONNECTED) {
+            mHal.setPenBle(false);
+        } else if (state == BluetoothProfile.STATE_DISCONNECTED
+                && TextUtils.equals(mLinkedMac, device.getAddress())) {
+            mLinkedMac = null;
+            mHal.setPenType(PEN_TYPE_NONE);
             mHal.setPenMode(false);
+            closeGatt();
         }
     }
 
@@ -290,12 +344,20 @@ final class PenLink {
             if (mDevice != null && TextUtils.equals(mDevice.getAddress(), device.getAddress())) {
                 return;
             }
-            mGatt.close();
-            mGatt = null;
+            closeGatt();
         }
         mDevice = device;
         mGatt = device.connectGatt(mContext, true, mGattCallback,
                 BluetoothDevice.TRANSPORT_LE, BluetoothDevice.PHY_LE_1M_MASK, mHandler);
+    }
+
+    /** The pen is gone: the command channel is torn down. */
+    private void closeGatt() {
+        if (mGatt != null) {
+            mGatt.close();
+            mGatt = null;
+        }
+        mDevice = null;
     }
 
     private void subscribe(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
@@ -321,7 +383,7 @@ final class PenLink {
         }
     }
 
-    /** The pad stops transmitting while the pen is linked. */
+    /** A linked pen is on the pad: the pad receiver is stopped once. */
     private void closeChargingPad() {
         if (mCloseRxSent) {
             return;
@@ -347,24 +409,24 @@ final class PenLink {
     }
 
     /*
-     * As stock getPenTypeByName: a name holding "Lenovo Tab Pen Pro" that is
-     * not the Pro 2 is a Tab Pen Pro, so a Tab Pen Pro 3 is linked as one.
+     * A name holding "Lenovo Tab Pen Pro" that is not the Pro 2 is a Tab Pen
+     * Pro, so a "Lenovo Tab Pen Pro 3" is linked as one.
      */
     private static int penTypeByName(String name) {
         if (name == null) {
             return PEN_TYPE_NONE;
         }
-        if (name.contains(NAME_TAB_PEN_PRO_2)) {
-            return PEN_TYPE_TAB_PEN_PRO_2;
-        }
-        if (name.contains(NAME_TAB_PEN_PRO)) {
-            return PEN_TYPE_TAB_PEN_PRO;
+        if (name.contains(NAME_PRECISION_PEN_3)) {
+            return PEN_TYPE_PRECISION_PEN_3;
         }
         if (name.contains(NAME_TAB_PEN_PLUS)) {
             return PEN_TYPE_TAB_PEN_PLUS;
         }
-        if (name.contains(NAME_PRECISION_PEN_3)) {
-            return PEN_TYPE_PRECISION_PEN_3;
+        if (name.contains(NAME_TAB_PEN_PRO) && !name.contains(NAME_TAB_PEN_PRO_2)) {
+            return PEN_TYPE_TAB_PEN_PRO;
+        }
+        if (name.contains(NAME_TAB_PEN_PRO_2)) {
+            return PEN_TYPE_TAB_PEN_PRO_2;
         }
         return PEN_TYPE_NONE;
     }

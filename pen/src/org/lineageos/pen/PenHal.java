@@ -12,26 +12,22 @@ import android.os.ServiceManager;
 import android.util.Log;
 
 /**
- * The two stock Lenovo vendor HALs the pen needs, called as raw binder
- * transactions.
+ * The two Lenovo vendor HALs the pen drives, called as raw binder transactions.
  *
- * Stock ZUI talks to them through the Java stubs in framework.jar
- * (vendor.lenovo.hardware.touchscreen.ITouchscreen VERSION 6 and
- * vendor.lenovo.hardware.battery.IBattery). We do not copy those interface
- * files: only the few methods the pen uses are called, with the transaction
- * codes of the stock stubs and the parcel layout AIDL generates (interface
- * token, then the arguments; the reply starts with the exception status).
+ * Only the pen methods of either interface are used, so the AIDL interface
+ * files are not copied into the app: every call is built here with the
+ * transaction codes of the interfaces and the parcel layout AIDL generates
+ * (interface token, then the arguments; the reply starts with the exception
+ * status).
  *
- * Transaction codes, verified against framework.jar classes6.dex and against
- * the vendor NDK libraries (vendor.lenovo.hardware.*-V*-ndk.so):
- *   ITouchscreen#setPenMode(boolean)  11    setPenBle(boolean)          12
- *   ITouchscreen#ioctl(int, String)   13
- *   IBattery#setStylusQiCommand(int)  25 (25 = 0x19, AIDL VERSION 5)
+ *   ITouchscreen#setPenMode(boolean)   11
+ *   ITouchscreen#setPenBle(boolean)    12
+ *   ITouchscreen#ioctl(int, String)    13
+ *   IBattery#setStylusQiCommand(int)   25
  *
- * The pen type is not a transaction of its own: the vendor touchscreen
- * library has no setPentype (the Java stub in framework.jar declares one at
- * code 21, but the HAL does not implement it), and stock sets it with
- * ioctl(IOCTL_CMD_PEN_TYPE = 3, penType) - TouchscreenServiceManager#setPenType.
+ * The touch panel pen type has no transaction of its own: the touchscreen HAL
+ * implements no setPentype, so the type is sent with
+ * ioctl(IOCTL_CMD_PEN_TYPE = 3, penType) instead.
  */
 final class PenHal {
     private static final String TAG = "PenHal";
@@ -57,15 +53,15 @@ final class PenHal {
 
     /** Touch panel: true while the pen (HID) link is up. */
     void setPenMode(boolean enabled) {
-        callBool(TOUCHSCREEN, TS_SET_PEN_MODE, parcel -> parcel.writeInt(enabled ? 1 : 0));
+        callBool(TOUCHSCREEN, TS_SET_PEN_MODE, parcel -> parcel.writeBoolean(enabled));
     }
 
-    /** Touch panel: true while the pen link is being established. */
+    /** Touch panel: pairing mode, true while a pen link is being set up. */
     void setPenBle(boolean enabled) {
-        callBool(TOUCHSCREEN, TS_SET_PEN_BLE, parcel -> parcel.writeInt(enabled ? 1 : 0));
+        callBool(TOUCHSCREEN, TS_SET_PEN_BLE, parcel -> parcel.writeBoolean(enabled));
     }
 
-    /** Touch panel: pen type reported to the IC. */
+    /** Touch panel: pen type reported to the IC, 0 when no pen is linked. */
     void setPenType(int penType) {
         ioctl(IOCTL_CMD_PEN_TYPE, String.valueOf(penType));
     }
@@ -85,7 +81,7 @@ final class PenHal {
         }
     }
 
-    /** Pen charger: stock IBattery#setStylusQiCommand (writes wls_tx/cmd). */
+    /** Pen charger: IBattery#setStylusQiCommand (writes wls_tx/cmd). */
     boolean setStylusQiCommand(int command) {
         return callBool(BATTERY, BATTERY_SET_STYLUS_QI_COMMAND, parcel -> parcel.writeInt(command));
     }
@@ -96,7 +92,7 @@ final class PenHal {
             return false;
         }
         try {
-            return reply.readInt() != 0;
+            return reply.readBoolean();
         } finally {
             reply.recycle();
         }

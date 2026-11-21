@@ -18,15 +18,14 @@ import android.content.Intent;
  * One IMPORTANCE_HIGH notification for a pen that lies on the charging pad and
  * is not bonded yet: "Pen attached" / "Tap to connect". Tapping it asks this app
  * to scan for the address the charger reported and to bond the pen, and the
- * standard Android pairing dialog takes the confirmation. The flow and the
- * notification are those of the LineageOS OnePlus pen app (hardware/oplus
- * packages/Pen, PenService.kt); a bonded pen gets nothing, and the notification
- * is cancelled as soon as the pen leaves the pad.
+ * standard Android pairing dialog takes the confirmation. A bonded pen gets
+ * nothing, and the notification is cancelled as soon as the pen leaves the
+ * pad.
  */
 final class PenNotifications {
     /** Channel of the pairing prompt. */
     static final String CHANNEL = "LenovoPen";
-    /** One prompt at a time, as in the OnePlus pen app. */
+    /** One prompt at a time. */
     private static final int ID_ATTACHED = 1000;
 
     private final Context mContext;
