@@ -13,5 +13,4 @@
     <string name="dolby_geq_reset">Rivendos</string>
     <string name="dolby_ieq_category">EQ inteligjent</string>
     <string name="dolby_geq_speaker_only">Ekualizuesi zbatohet vetëm për altoparlantin e tabletit</string>
-    <string name="dolby_ieq_headphones_only">Paravendosjet zbatohen vetëm për kufjet</string>
 </resources>

@@ -13,5 +13,4 @@
     <string name="dolby_geq_reset">איפוס</string>
     <string name="dolby_ieq_category">EQ חכם</string>
     <string name="dolby_geq_speaker_only">האקוולייזר חל רק על הרמקול של הטאبلט</string>
-    <string name="dolby_ieq_headphones_only">ההגדרות הקבועות מראש חלות רק על אוזניות</string>
 </resources>

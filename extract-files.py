@@ -144,6 +144,15 @@ blob_fixups: blob_fixups_user_type = {
         'vendor/etc/audio/sku_pineapple_qssi/audio_policy_configuration.xml',
     ): blob_fixup()
         .regex_replace(r'(?m)^[ \t]*<item>FM Tuner</item>\r?\n', ''),
+    # Enable the intelligent equalizer on the tablet speaker in every
+    # profile, so the presets shape the speaker output as they do on
+    # headphones.
+    'vendor/etc/dolby/dax-default.xml': blob_fixup()
+        .regex_replace(
+            r'(<endpoint_type id="speaker">\s*<include ieq_preset="\d+"/>\s*'
+            r'<ieq-enable value=")false(")',
+            r'\1true\2',
+        ),
     # WiFi Display (stock system side, see proprietary-files.txt)
     # The Android 17 stock WFD libraries are built against the current libgui,
     # libinput and libaudiobase: libwfdmmsrc_system, libwfdnative and

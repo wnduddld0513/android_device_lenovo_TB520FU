@@ -58,11 +58,6 @@
         android:key="dolby_ieq_category"
         android:title="@string/dolby_ieq_category">
 
-        <Preference
-            android:key="dolby_ieq_note"
-            android:selectable="false"
-            android:summary="@string/dolby_ieq_headphones_only" />
-
         <com.android.settingslib.widget.SelectorWithWidgetPreference
             android:key="dolby_preset_none"
             android:title="@string/dolby_preset_none" />

@@ -13,5 +13,4 @@
     <string name="dolby_geq_reset">Επαναφορά</string>
     <string name="dolby_ieq_category">Έξυπνος EQ</string>
     <string name="dolby_geq_speaker_only">Ο ισοσταθμιστής ισχύει μόνο για το ηχείο του tablet</string>
-    <string name="dolby_ieq_headphones_only">Οι προεπιλογές ισχύουν μόνο για ακουστικά</string>
 </resources>

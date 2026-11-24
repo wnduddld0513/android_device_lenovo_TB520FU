@@ -13,5 +13,4 @@
     <string name="dolby_geq_reset">Сбросить</string>
     <string name="dolby_ieq_category">Интеллектуальный EQ</string>
     <string name="dolby_geq_speaker_only">Эквалайзер применяется только к динамику планшета</string>
-    <string name="dolby_ieq_headphones_only">Пресеты применяются только к наушникам</string>
 </resources>

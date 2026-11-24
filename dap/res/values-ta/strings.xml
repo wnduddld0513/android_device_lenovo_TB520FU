@@ -13,5 +13,4 @@
     <string name="dolby_geq_reset">மீட்டமை</string>
     <string name="dolby_ieq_category">நுண்ணறிவு EQ</string>
     <string name="dolby_geq_speaker_only">சமநிலைப்படுத்தி டேப்லெட் ஸ்பீக்கருக்கு மட்டுமே பொருந்தும்</string>
-    <string name="dolby_ieq_headphones_only">முன்னமைவுகள் ஹெட்ஃபோன்களுக்கு மட்டுமே பொருந்தும்</string>
 </resources>

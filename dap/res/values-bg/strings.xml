@@ -13,5 +13,4 @@
     <string name="dolby_geq_reset">Нулиране</string>
     <string name="dolby_ieq_category">Интелигентен EQ</string>
     <string name="dolby_geq_speaker_only">Еквалайзерът се прилага само за високоговорителя на таблета</string>
-    <string name="dolby_ieq_headphones_only">Предварително зададените настройки се прилагат само за слушалки</string>
 </resources>

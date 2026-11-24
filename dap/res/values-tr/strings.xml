@@ -13,5 +13,4 @@
     <string name="dolby_geq_reset">Sıfırla</string>
     <string name="dolby_ieq_category">Akıllı EQ</string>
     <string name="dolby_geq_speaker_only">Ekolayzer yalnızca tablet hoparlörü için geçerlidir</string>
-    <string name="dolby_ieq_headphones_only">Hazır ayarlar yalnızca kulaklık için geçerlidir</string>
 </resources>

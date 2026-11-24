@@ -13,5 +13,4 @@
     <string name="dolby_geq_reset">リセット</string>
     <string name="dolby_ieq_category">インテリジェント EQ</string>
     <string name="dolby_geq_speaker_only">イコライザーはタブレットのスピーカーにのみ適用されます</string>
-    <string name="dolby_ieq_headphones_only">プリセットはヘッドフォンにのみ適用されます</string>
 </resources>

@@ -13,5 +13,4 @@
     <string name="dolby_geq_reset">Återställ</string>
     <string name="dolby_ieq_category">Intelligent EQ</string>
     <string name="dolby_geq_speaker_only">Equalizern gäller endast för surfplattans högtalare</string>
-    <string name="dolby_ieq_headphones_only">Förinställningarna gäller endast för hörlurar</string>
 </resources>

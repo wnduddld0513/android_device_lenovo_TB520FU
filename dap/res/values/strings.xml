@@ -13,8 +13,6 @@
 
     <!-- Intelligent equalizer presets -->
     <string name="dolby_ieq_category">Intelligent EQ</string>
-    <!-- Shown over the presets while media plays through the tablet speaker -->
-    <string name="dolby_ieq_headphones_only">The presets only apply to headphones</string>
     <string name="dolby_preset_none">Off</string>
     <string name="dolby_preset_detailed">Detailed</string>
     <string name="dolby_preset_balanced">Balanced</string>

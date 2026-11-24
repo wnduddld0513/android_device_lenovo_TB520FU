@@ -43,7 +43,6 @@ class DolbyFragment :
     private lateinit var dialogueCategory: PreferenceCategory
     private lateinit var dialogueEnhancer: SliderPreference
     private lateinit var ieqCategory: PreferenceCategory
-    private lateinit var ieqNote: Preference
     private lateinit var geqCategory: PreferenceCategory
     private lateinit var equalizer: EqualizerPreference
     private lateinit var geqReset: ButtonPreference
@@ -56,8 +55,7 @@ class DolbyFragment :
             override fun onChange(selfChange: Boolean) = updateState()
         }
 
-    // The tuning applies the equalizer on the built-in speaker and the presets everywhere else;
-    // follow where media plays.
+    // The tuning applies the equalizer on the built-in speaker only; follow where media plays.
     private val routeListener =
         AudioManager.OnDevicesForAttributesChangedListener { _, _ -> updateState() }
 
@@ -79,7 +77,6 @@ class DolbyFragment :
         dialogueEnhancer.onPreferenceChangeListener = this
 
         ieqCategory = findPreference(PREF_IEQ_CATEGORY)!!
-        ieqNote = findPreference(PREF_IEQ_NOTE)!!
         geqCategory = findPreference(PREF_GEQ_CATEGORY)!!
         equalizer = findPreference(PREF_GEQ)!!
         equalizer.listener = this
@@ -190,10 +187,9 @@ class DolbyFragment :
             val speaker = isMediaOnSpeaker()
 
             val preset = DolbyCore.getIeqPreset()
-            ieqNote.isVisible = speaker
             for ((index, key) in PRESET_KEYS.withIndex()) {
                 findPreference<SelectorWithWidgetPreference>(key)?.apply {
-                    isEnabled = enabled && !speaker
+                    isEnabled = enabled
                     isChecked = index == preset
                 }
             }
@@ -212,7 +208,6 @@ class DolbyFragment :
         const val PREF_DIALOGUE_CATEGORY = "dolby_dialogue_category"
         const val PREF_DIALOGUE_ENHANCER = "dolby_dialogue_enhancer"
         const val PREF_IEQ_CATEGORY = "dolby_ieq_category"
-        const val PREF_IEQ_NOTE = "dolby_ieq_note"
         const val PREF_GEQ_CATEGORY = "dolby_geq_category"
         const val PREF_GEQ = "dolby_geq"
         const val PREF_GEQ_RESET = "dolby_geq_reset"

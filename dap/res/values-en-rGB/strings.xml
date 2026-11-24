@@ -13,5 +13,4 @@
     <string name="dolby_geq_reset">Reset</string>
     <string name="dolby_ieq_category">Intelligent EQ</string>
     <string name="dolby_geq_speaker_only">The equalizer only applies to the tablet speaker</string>
-    <string name="dolby_ieq_headphones_only">The presets only apply to headphones</string>
 </resources>

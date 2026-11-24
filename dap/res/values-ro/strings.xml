@@ -13,5 +13,4 @@
     <string name="dolby_geq_reset">Resetează</string>
     <string name="dolby_ieq_category">EQ inteligent</string>
     <string name="dolby_geq_speaker_only">Egalizatorul se aplică doar difuzorului tabletei</string>
-    <string name="dolby_ieq_headphones_only">Presetările se aplică doar căștilor</string>
 </resources>

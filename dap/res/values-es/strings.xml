@@ -13,5 +13,4 @@
     <string name="dolby_geq_reset">Restablecer</string>
     <string name="dolby_ieq_category">EQ inteligente</string>
     <string name="dolby_geq_speaker_only">El ecualizador solo se aplica al altavoz de la tablet</string>
-    <string name="dolby_ieq_headphones_only">Los preajustes solo se aplican a los auriculares</string>
 </resources>
