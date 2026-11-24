@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Párbeszédjavítás</string>
     <string name="dolby_geq_title">Hangszínszabályzó</string>
     <string name="dolby_geq_reset">Visszaállítás</string>
+    <string name="dolby_ieq_category">Intelligens EQ</string>
+    <string name="dolby_geq_speaker_only">A hangszínszabályzó csak a táblagép hangszórójára érvényes</string>
+    <string name="dolby_ieq_headphones_only">Az előbeállítások csak a fejhallgatóra érvényesek</string>
 </resources>

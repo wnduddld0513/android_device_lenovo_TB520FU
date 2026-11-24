@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Feabhsóir idirphlé</string>
     <string name="dolby_geq_title">Toncúlaí</string>
     <string name="dolby_geq_reset">Athshocraigh</string>
+    <string name="dolby_ieq_category">EQ cliste</string>
+    <string name="dolby_geq_speaker_only">Ní bhaineann an toncúlaí ach le cainteoir an táibléid</string>
+    <string name="dolby_ieq_headphones_only">Ní bhaineann na réamhshocruithe ach le cluasáin</string>
 </resources>

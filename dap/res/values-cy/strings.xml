@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Gwellwr deialog</string>
     <string name="dolby_geq_title">Ecwaleiddiwr</string>
     <string name="dolby_geq_reset">Ailosod</string>
+    <string name="dolby_ieq_category">EQ deallus</string>
+    <string name="dolby_geq_speaker_only">Dim ond i seinydd y dabled y mae\'r ecwaleiddiwr yn berthnasol</string>
+    <string name="dolby_ieq_headphones_only">Dim ond i glustffonau y mae\'r rhagosodiadau yn berthnasol</string>
 </resources>

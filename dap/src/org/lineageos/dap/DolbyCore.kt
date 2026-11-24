@@ -70,21 +70,23 @@ object DolbyCore {
     const val PRESET_BALANCED = 2
     const val PRESET_WARM = 3
 
-    // The effect accepts a dialogue enhancement amount from 0 to 16.
-    const val DIALOG_ENHANCER_MAX = 16
+    // The dialogue enhancer level of the screen: 0 switches the enhancer off, 1 to 9 is its
+    // amount (the effect itself accepts up to 16).
+    const val DIALOG_ENHANCER_MAX = 9
 
-    // The effect has 20 graphic equalizer gains in 1/16 dB steps; the screen draws them as 10
-    // bars, each between -6 and +6 dB, taking the even gains as bar centres.
-    const val GEQ_BARS = 10
-    const val GEQ_GAINS = 20
-    const val GEQ_MIN_DB = -6
-    const val GEQ_MAX_DB = 6
+    // The effect has 20 graphic equalizer gains in 1/16 dB. The screen shows 10 bands, the even
+    // gains, each between -6 and +6 dB in 0.5 dB steps; every odd gain is the mean of its two
+    // neighbouring bands and the last one repeats the last band.
+    const val GEQ_BANDS = 10
+    const val GEQ_MAX_DB = 6f
+    const val GEQ_STEP_DB = 0.5f
+    private const val GEQ_GAINS = 20
     private const val GEQ_GAIN_SCALE = 16
 
     // The profile and the switch state live in Settings.Global, the equalizer curve in
     // Settings.System as the 20 raw gains.
-    private const val SETTING_PROFILE = "dolby_dap_profile"
-    private const val SETTING_STATE = "dlb_dap_state"
+    const val SETTING_PROFILE = "dolby_dap_profile"
+    const val SETTING_STATE = "dlb_dap_state"
     private const val SETTING_GEQ = "dolby_geq_values"
 
     private var audioEffect: AudioEffect? = null
@@ -93,7 +95,6 @@ object DolbyCore {
 
     fun init(context: Context) {
         appContext = context.applicationContext
-        migrateGeqSettings(context)
     }
 
     // The effect starts enabled on the Dynamic profile, and the profile, switch state and
@@ -116,11 +117,7 @@ object DolbyCore {
         try {
             // Write the curve and the profile before enabling, so the effect never plays with
             // the profile it happened to hold.
-            Settings.System.getString(resolver, SETTING_GEQ)
-                ?.split(",")
-                ?.mapNotNull { it.trim().toIntOrNull() }
-                ?.takeIf { it.size == GEQ_GAINS }
-                ?.let { setGeqGains(it.toIntArray()) }
+            getStoredGeqGains(context)?.let { setGeqGains(it) }
             if (!legacyOff) {
                 setProfile(profile)
             }
@@ -135,28 +132,6 @@ object DolbyCore {
                 Settings.Global.putInt(resolver, SETTING_PROFILE, it)
             }
         }
-    }
-
-    // One format for the equalizer curve: an older build kept the 10 bar values in
-    // Settings.Global, from now on the 20 gains live in Settings.System.
-    private fun migrateGeqSettings(context: Context) {
-        val resolver = context.contentResolver
-        if (Settings.System.getString(resolver, SETTING_GEQ) != null) {
-            return
-        }
-        val legacy = Settings.Global.getString(resolver, SETTING_GEQ) ?: return
-        // Drop the old entry whatever it holds; only a complete bar list is carried over.
-        Settings.Global.putString(resolver, SETTING_GEQ, null)
-        val bars =
-            legacy.split(",")
-                .mapNotNull { it.trim().toIntOrNull() }
-                .takeIf { it.size == GEQ_BARS }
-                ?: return
-        Settings.System.putString(
-            resolver,
-            SETTING_GEQ,
-            geqGainsFromBars(bars.toIntArray()).joinToString(","),
-        )
     }
 
     private fun getEffect(): AudioEffect? {
@@ -356,6 +331,11 @@ object DolbyCore {
         return if (stored in MODE_DYNAMIC..MODE_MUSIC) stored else MODE_DYNAMIC
     }
 
+    // The profile the effect holds, kept while it is switched off; the saved one when the effect
+    // is unreachable or holds a profile the screen does not offer.
+    fun getSelectedProfile(context: Context): Int =
+        getProfile().takeIf { it in MODE_DYNAMIC..MODE_MUSIC } ?: getLastProfile(context)
+
     fun setMode(mode: Int, context: Context?) {
         if (mode == MODE_OFF) {
             setEnabled(false, context)
@@ -374,57 +354,84 @@ object DolbyCore {
 
     fun setIeqPreset(preset: Int) = setProfileParam(ID_IEQ_PRESET, intArrayOf(preset))
 
-    fun isDialogEnhancerEnabled(): Boolean =
+    private fun isDialogEnhancerEnabled(): Boolean =
         getProfileParam(ID_DIALOG_ENHANCER_ENABLE, 1)?.get(0)?.let { it > 0 } ?: false
 
-    fun setDialogEnhancerEnabled(enabled: Boolean) =
+    private fun setDialogEnhancerEnabled(enabled: Boolean) =
         setProfileParam(ID_DIALOG_ENHANCER_ENABLE, intArrayOf(if (enabled) 1 else 0))
 
-    fun getDialogEnhancerAmount(): Int =
+    private fun getDialogEnhancerAmount(): Int =
         getProfileParam(ID_DIALOG_ENHANCER_AMOUNT, 1)?.get(0) ?: 0
 
-    fun setDialogEnhancerAmount(amount: Int) {
-        val value = amount.coerceIn(0, DIALOG_ENHANCER_MAX)
+    // 0 while the enhancer is off, its amount while it is on.
+    fun getDialogEnhancerLevel(): Int =
+        if (isDialogEnhancerEnabled()) {
+            getDialogEnhancerAmount().coerceIn(0, DIALOG_ENHANCER_MAX)
+        } else {
+            0
+        }
+
+    // Level 0 switches the enhancer off and leaves the amount of the tuning alone; any other
+    // level switches it on with that amount.
+    fun setDialogEnhancerLevel(level: Int) {
+        val value = level.coerceIn(0, DIALOG_ENHANCER_MAX)
+        val enabled = isDialogEnhancerEnabled()
+        if (value == 0) {
+            if (enabled) {
+                setDialogEnhancerEnabled(false)
+            }
+            return
+        }
         if (value != getDialogEnhancerAmount()) {
             setProfileParam(ID_DIALOG_ENHANCER_AMOUNT, intArrayOf(value))
         }
-    }
-
-    // The equalizer curve is a Music-profile setting and stays with that profile whatever
-    // profile the effect is set to when it is read or written.
-    private fun readGeqGains(): IntArray? = getProfileParam(MODE_MUSIC, ID_GEQ_GAINS, GEQ_GAINS)
-
-    fun getGeqBars(): IntArray {
-        val gains = readGeqGains() ?: IntArray(GEQ_GAINS)
-        return IntArray(GEQ_BARS) { bar ->
-            (gains[bar * 2] / GEQ_GAIN_SCALE).coerceIn(GEQ_MIN_DB, GEQ_MAX_DB)
+        if (!enabled) {
+            setDialogEnhancerEnabled(true)
         }
     }
 
-    fun setGeqBars(barsDb: IntArray) =
-        setProfileParam(MODE_MUSIC, ID_GEQ_GAINS, geqGainsFromBars(barsDb))
+    // The equalizer curve belongs to the Music profile, whatever profile the effect holds when it
+    // is read or written.
+    private fun readGeqGains(): IntArray? = getProfileParam(MODE_MUSIC, ID_GEQ_GAINS, GEQ_GAINS)
 
     private fun setGeqGains(gains: IntArray) = setProfileParam(MODE_MUSIC, ID_GEQ_GAINS, gains)
 
-    private fun geqGainsFromBars(barsDb: IntArray): IntArray {
-        val gains = IntArray(GEQ_GAINS)
-        for (bar in 0 until GEQ_BARS) {
-            val db = (barsDb.getOrNull(bar) ?: 0).coerceIn(GEQ_MIN_DB, GEQ_MAX_DB)
-            gains[bar * 2] = db * GEQ_GAIN_SCALE
+    private fun getStoredGeqGains(context: Context): IntArray? =
+        Settings.System.getString(context.contentResolver, SETTING_GEQ)
+            ?.split(",")
+            ?.mapNotNull { it.trim().toIntOrNull() }
+            ?.takeIf { it.size == GEQ_GAINS }
+            ?.toIntArray()
+
+    // The bands in dB; the saved curve when the effect is unreachable, flat without either.
+    fun getGeqBands(context: Context): FloatArray {
+        val gains = readGeqGains() ?: getStoredGeqGains(context) ?: IntArray(GEQ_GAINS)
+        return FloatArray(GEQ_BANDS) { band ->
+            (gains[band * 2].toFloat() / GEQ_GAIN_SCALE).coerceIn(-GEQ_MAX_DB, GEQ_MAX_DB)
         }
-        // The gains between two bar centres are the mean of the neighbouring bars, so the 20
-        // gains of the effect stay a smooth 10-bar curve; the last gain repeats the last bar.
-        for (bar in 0 until GEQ_BARS - 1) {
-            gains[bar * 2 + 1] = (gains[bar * 2] + gains[(bar + 1) * 2]) / 2
+    }
+
+    // Writes the curve; with persist the same gains are saved for the next boot.
+    fun setGeqBands(context: Context, bands: FloatArray, persist: Boolean) {
+        val gains = geqGainsFromBands(bands)
+        setGeqGains(gains)
+        if (persist) {
+            Settings.System.putString(context.contentResolver, SETTING_GEQ, gains.joinToString(","))
+        }
+    }
+
+    private fun geqGainsFromBands(bands: FloatArray): IntArray {
+        val gains = IntArray(GEQ_GAINS)
+        for (band in 0 until GEQ_BANDS) {
+            gains[band * 2] = Math.round(snapGeqDb(bands.getOrElse(band) { 0f }) * GEQ_GAIN_SCALE)
+        }
+        for (band in 0 until GEQ_BANDS - 1) {
+            gains[band * 2 + 1] = (gains[band * 2] + gains[(band + 1) * 2]) / 2
         }
         gains[GEQ_GAINS - 1] = gains[GEQ_GAINS - 2]
         return gains
     }
 
-    // Stores the curve the effect reports; an unreadable curve keeps the stored one.
-    fun persistGeq(context: Context) {
-        readGeqGains()?.let {
-            Settings.System.putString(context.contentResolver, SETTING_GEQ, it.joinToString(","))
-        }
-    }
+    fun snapGeqDb(db: Float): Float =
+        (Math.round(db / GEQ_STEP_DB) * GEQ_STEP_DB).coerceIn(-GEQ_MAX_DB, GEQ_MAX_DB)
 }

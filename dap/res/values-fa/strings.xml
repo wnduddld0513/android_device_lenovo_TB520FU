@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">بهبوددهنده گفت‌وگو</string>
     <string name="dolby_geq_title">اکولایزر</string>
     <string name="dolby_geq_reset">بازنشانی</string>
+    <string name="dolby_ieq_category">EQ هوشمند</string>
+    <string name="dolby_geq_speaker_only">اکولایزر فقط برای بلندگوی رایانه لوحی اعمال می‌شود</string>
+    <string name="dolby_ieq_headphones_only">پیش‌تنظیم‌ها فقط برای هدفون اعمال می‌شوند</string>
 </resources>

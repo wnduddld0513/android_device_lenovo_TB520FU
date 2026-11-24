@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Megioradore de diàlogu</string>
     <string name="dolby_geq_title">Ecularizadore</string>
     <string name="dolby_geq_reset">Riprìstina</string>
+    <string name="dolby_ieq_category">EQ intelligente</string>
+    <string name="dolby_geq_speaker_only">S\'ecularizadore s\'àplicat sceti a s\'altoparlante de su tablet</string>
+    <string name="dolby_ieq_headphones_only">Is predefinitziones s\'àplicant sceti a sos auricolares</string>
 </resources>

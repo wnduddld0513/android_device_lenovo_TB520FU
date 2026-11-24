@@ -22,6 +22,7 @@ android_app {
     platform_apis: true,
     static_libs: [
         "SettingsLibActivityEmbedding",
+        "androidx.customview_customview",
         "androidx.preference_preference",
     ],
     system_ext_specific: true,

@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Amélioration du dialogue</string>
     <string name="dolby_geq_title">Égaliseur</string>
     <string name="dolby_geq_reset">Réinitialiser</string>
+    <string name="dolby_ieq_category">EQ intelligent</string>
+    <string name="dolby_geq_speaker_only">L\'égaliseur s\'applique uniquement au haut-parleur de la tablette</string>
+    <string name="dolby_ieq_headphones_only">Les préréglages s\'appliquent uniquement au casque</string>
 </resources>

@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Wzmacniacz mowy</string>
     <string name="dolby_geq_title">Korekcja</string>
     <string name="dolby_geq_reset">Resetuj</string>
+    <string name="dolby_ieq_category">Inteligentny EQ</string>
+    <string name="dolby_geq_speaker_only">Korekcja dotyczy tylko głośnika tabletu</string>
+    <string name="dolby_ieq_headphones_only">Gotowe ustawienia dotyczą tylko słuchawek</string>
 </resources>

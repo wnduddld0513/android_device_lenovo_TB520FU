@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">對白增強</string>
     <string name="dolby_geq_title">等化器</string>
     <string name="dolby_geq_reset">重設</string>
+    <string name="dolby_ieq_category">智慧 EQ</string>
+    <string name="dolby_geq_speaker_only">等化器僅適用於平板電腦揚聲器</string>
+    <string name="dolby_ieq_headphones_only">預設僅適用於耳機</string>
 </resources>

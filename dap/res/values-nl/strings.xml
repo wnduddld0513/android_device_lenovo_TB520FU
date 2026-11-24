@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Dialogue-enhancer</string>
     <string name="dolby_geq_title">Equalizer</string>
     <string name="dolby_geq_reset">Resetten</string>
+    <string name="dolby_ieq_category">Intelligente EQ</string>
+    <string name="dolby_geq_speaker_only">De equalizer is alleen van toepassing op de luidspreker van de tablet</string>
+    <string name="dolby_ieq_headphones_only">De voorinstellingen zijn alleen van toepassing op de koptelefoon</string>
 </resources>

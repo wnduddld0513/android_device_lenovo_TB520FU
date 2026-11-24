@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Dialoq təkmilləşdiricisi</string>
     <string name="dolby_geq_title">Ekvalayzer</string>
     <string name="dolby_geq_reset">Sıfırla</string>
+    <string name="dolby_ieq_category">Ağıllı EQ</string>
+    <string name="dolby_geq_speaker_only">Ekvalayzer yalnız planşet dinamikinə tətbiq olunur</string>
+    <string name="dolby_ieq_headphones_only">Hazır ayarlar yalnız qulaqlıqlara tətbiq olunur</string>
 </resources>

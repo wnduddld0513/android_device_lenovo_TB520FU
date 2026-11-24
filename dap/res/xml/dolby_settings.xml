@@ -14,21 +14,20 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<!-- The switch, the mode radios, then one category holding the dialogue enhancer, the
-     music presets and the equalizer. -->
+<!-- The switch, the modes, then the settings of the selected mode: the dialogue enhancer for
+     Movie, the intelligent equalizer presets and the graphic equalizer for Music. -->
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:title="@string/dolby_title">
 
     <com.android.settingslib.widget.MainSwitchPreference
         android:key="dolby_enable"
         android:title="@string/dolby_title" />
 
-    <PreferenceCategory android:title="@string/dolby_mode_category">
-
-        <com.android.settingslib.widget.SelectorWithWidgetPreference
-            android:key="dolby_mode_off"
-            android:title="@string/dolby_preset_none" />
+    <PreferenceCategory
+        android:key="dolby_mode_category"
+        android:title="@string/dolby_mode_category">
 
         <com.android.settingslib.widget.SelectorWithWidgetPreference
             android:key="dolby_mode_dynamic"
@@ -44,11 +43,25 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:key="dolby_enhance_category">
+    <PreferenceCategory android:key="dolby_dialogue_category">
 
-        <androidx.preference.SwitchPreferenceCompat
+        <com.android.settingslib.widget.SliderPreference
             android:key="dolby_dialogue_enhancer"
-            android:title="@string/dolby_dialogue_enhancer_title" />
+            android:title="@string/dolby_dialogue_enhancer_title"
+            android:persistent="false"
+            app:showSeekBarValue="true"
+            app:updatesContinuously="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="dolby_ieq_category"
+        android:title="@string/dolby_ieq_category">
+
+        <Preference
+            android:key="dolby_ieq_note"
+            android:selectable="false"
+            android:summary="@string/dolby_ieq_headphones_only" />
 
         <com.android.settingslib.widget.SelectorWithWidgetPreference
             android:key="dolby_preset_none"
@@ -66,9 +79,19 @@
             android:key="dolby_preset_warm"
             android:title="@string/dolby_preset_warm" />
 
-        <PreferenceScreen
-            android:key="dolby_geq"
-            android:title="@string/dolby_geq_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="dolby_geq_category"
+        android:title="@string/dolby_geq_title">
+
+        <org.lineageos.dap.EqualizerPreference
+            android:key="dolby_geq" />
+
+        <com.android.settingslib.widget.ButtonPreference
+            android:key="dolby_geq_reset"
+            android:title="@string/dolby_geq_reset"
+            app:buttonPreferenceType="outline" />
 
     </PreferenceCategory>
 

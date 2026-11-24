@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Vylepšení dialogů</string>
     <string name="dolby_geq_title">Ekvalizér</string>
     <string name="dolby_geq_reset">Resetovat</string>
+    <string name="dolby_ieq_category">Inteligentní EQ</string>
+    <string name="dolby_geq_speaker_only">Ekvalizér platí pouze pro reproduktor tabletu</string>
+    <string name="dolby_ieq_headphones_only">Předvolby platí pouze pro sluchátka</string>
 </resources>

@@ -11,7 +11,10 @@
     <string name="dolby_profile_movie">Movie</string>
     <string name="dolby_profile_music">Music</string>
 
-    <!-- Music presets -->
+    <!-- Intelligent equalizer presets -->
+    <string name="dolby_ieq_category">Intelligent EQ</string>
+    <!-- Shown over the presets while media plays through the tablet speaker -->
+    <string name="dolby_ieq_headphones_only">The presets only apply to headphones</string>
     <string name="dolby_preset_none">Off</string>
     <string name="dolby_preset_detailed">Detailed</string>
     <string name="dolby_preset_balanced">Balanced</string>
@@ -23,4 +26,6 @@
     <!-- Equalizer -->
     <string name="dolby_geq_title">Equalizer</string>
     <string name="dolby_geq_reset">Reset</string>
+    <!-- Shown under the equalizer while media plays through headphones, Bluetooth or USB -->
+    <string name="dolby_geq_speaker_only">The equalizer only applies to the tablet speaker</string>
 </resources>

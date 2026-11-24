@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Izboljševanje pogovorov</string>
     <string name="dolby_geq_title">Izenačevalnik</string>
     <string name="dolby_geq_reset">Ponastavi</string>
+    <string name="dolby_ieq_category">Inteligentni EQ</string>
+    <string name="dolby_geq_speaker_only">Izenačevalnik velja samo za zvočnik tabličnega računalnika</string>
+    <string name="dolby_ieq_headphones_only">Prednastavitve veljajo samo za slušalke</string>
 </resources>

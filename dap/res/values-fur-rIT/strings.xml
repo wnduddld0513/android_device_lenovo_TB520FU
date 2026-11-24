@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Miorament dal dialic</string>
     <string name="dolby_geq_title">Ecualizadôr</string>
     <string name="dolby_geq_reset">Ripristine</string>
+    <string name="dolby_ieq_category">EQ inteligjent</string>
+    <string name="dolby_geq_speaker_only">L\'ecualizadôr si apliche dome aes cassis dal tablet</string>
+    <string name="dolby_ieq_headphones_only">Lis preimpostazions si aplichin dome aes scufis</string>
 </resources>

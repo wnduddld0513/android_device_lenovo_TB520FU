@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Penyempurna Dialog</string>
     <string name="dolby_geq_title">Equalizer</string>
     <string name="dolby_geq_reset">Setel ulang</string>
+    <string name="dolby_ieq_category">EQ cerdas</string>
+    <string name="dolby_geq_speaker_only">Equalizer hanya berlaku untuk speaker tablet</string>
+    <string name="dolby_ieq_headphones_only">Preset hanya berlaku untuk headphone</string>
 </resources>

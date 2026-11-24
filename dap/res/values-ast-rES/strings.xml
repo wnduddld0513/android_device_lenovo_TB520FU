@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Meyorador de diálogu</string>
     <string name="dolby_geq_title">Ecualizador</string>
     <string name="dolby_geq_reset">Reafitar</string>
+    <string name="dolby_ieq_category">EQ intelixente</string>
+    <string name="dolby_geq_speaker_only">L\'ecualizador namái s\'aplica al altavoz de la tableta</string>
+    <string name="dolby_ieq_headphones_only">Los preaxustes namái s\'apliquen a los cascos</string>
 </resources>

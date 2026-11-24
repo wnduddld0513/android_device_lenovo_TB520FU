@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Millorador de diàleg</string>
     <string name="dolby_geq_title">Equalitzador</string>
     <string name="dolby_geq_reset">Restableix</string>
+    <string name="dolby_ieq_category">EQ intel·ligent</string>
+    <string name="dolby_geq_speaker_only">L\'equalitzador només s\'aplica a l\'altaveu de la tauleta</string>
+    <string name="dolby_ieq_headphones_only">Els valors predefinits només s\'apliquen als auriculars</string>
 </resources>

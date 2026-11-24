@@ -17,92 +17,96 @@
 package org.lineageos.dap
 
 import android.content.Context
+import android.database.ContentObserver
+import android.media.AudioAttributes
+import android.media.AudioDeviceInfo
+import android.media.AudioManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.provider.Settings
 import androidx.preference.Preference
-import androidx.preference.PreferenceScreen
-import androidx.preference.SeekBarPreference
-import androidx.preference.SwitchPreferenceCompat
+import androidx.preference.PreferenceCategory
+import com.android.settingslib.widget.ButtonPreference
 import com.android.settingslib.widget.MainSwitchPreference
 import com.android.settingslib.widget.SelectorWithWidgetPreference
 import com.android.settingslib.widget.SettingsBasePreferenceFragment
+import com.android.settingslib.widget.SliderPreference
 
 class DolbyFragment :
     SettingsBasePreferenceFragment(),
     Preference.OnPreferenceChangeListener,
-    Preference.OnPreferenceClickListener {
+    Preference.OnPreferenceClickListener,
+    EqualizerView.Listener {
 
     private lateinit var switchBar: MainSwitchPreference
-    private lateinit var dialogEnhancer: SwitchPreferenceCompat
-    private lateinit var dialogAmount: SeekBarPreference
+    private lateinit var dialogueCategory: PreferenceCategory
+    private lateinit var dialogueEnhancer: SliderPreference
+    private lateinit var ieqCategory: PreferenceCategory
+    private lateinit var ieqNote: Preference
+    private lateinit var geqCategory: PreferenceCategory
+    private lateinit var equalizer: EqualizerPreference
+    private lateinit var geqReset: ButtonPreference
+    private lateinit var audioManager: AudioManager
     private var updating = false
+
+    // The Quick Settings tile switches the effect and the profile while the screen is open.
+    private val stateObserver =
+        object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(selfChange: Boolean) = updateState()
+        }
+
+    // The tuning applies the equalizer on the built-in speaker and the presets everywhere else;
+    // follow where media plays.
+    private val routeListener =
+        AudioManager.OnDevicesForAttributesChangedListener { _, _ -> updateState() }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.dolby_settings, rootKey)
+        audioManager = requireContext().getSystemService(AudioManager::class.java)!!
 
         switchBar = findPreference(PREF_DOLBY_ENABLE)!!
         switchBar.onPreferenceChangeListener = this
-        switchBar.isChecked = DolbyCore.isEnabled()
 
-        for (key in MODE_KEYS) {
-            findPreference<SelectorWithWidgetPreference>(key)?.onPreferenceClickListener = this
-        }
-        for (key in PRESET_KEYS) {
-            findPreference<SelectorWithWidgetPreference>(key)?.onPreferenceClickListener = this
+        for (key in MODE_KEYS + PRESET_KEYS) {
+            findPreference<SelectorWithWidgetPreference>(key)!!.onPreferenceClickListener = this
         }
 
-        dialogEnhancer = findPreference(PREF_DIALOG_ENHANCER)!!
-        dialogEnhancer.onPreferenceChangeListener = this
-        dialogAmount =
-            createSeekBar(
-                PREF_DIALOG_AMOUNT,
-                null,
-                0,
-                DolbyCore.DIALOG_ENHANCER_MAX,
-            )
-        dialogEnhancer.parent?.addPreference(dialogAmount)
+        dialogueCategory = findPreference(PREF_DIALOGUE_CATEGORY)!!
+        dialogueEnhancer = findPreference(PREF_DIALOGUE_ENHANCER)!!
+        dialogueEnhancer.min = 0
+        dialogueEnhancer.max = DolbyCore.DIALOG_ENHANCER_MAX
+        dialogueEnhancer.onPreferenceChangeListener = this
 
-        buildGraphicEqualizer()
+        ieqCategory = findPreference(PREF_IEQ_CATEGORY)!!
+        ieqNote = findPreference(PREF_IEQ_NOTE)!!
+        geqCategory = findPreference(PREF_GEQ_CATEGORY)!!
+        equalizer = findPreference(PREF_GEQ)!!
+        equalizer.listener = this
+        geqReset = findPreference(PREF_GEQ_RESET)!!
+        geqReset.setOnClickListener { resetEqualizer() }
+
         updateState()
     }
 
-    private fun createSeekBar(
-        key: String,
-        title: CharSequence?,
-        min: Int,
-        max: Int,
-    ): SeekBarPreference =
-        SeekBarPreference(requireContext()).apply {
-            this.key = key
-            this.title = title
-            setMin(min)
-            setMax(max)
-            setShowSeekBarValue(true)
-            isPersistent = false
-            onPreferenceChangeListener = this@DolbyFragment
+    override fun onStart() {
+        super.onStart()
+        val resolver = requireContext().contentResolver
+        for (key in arrayOf(DolbyCore.SETTING_STATE, DolbyCore.SETTING_PROFILE)) {
+            resolver.registerContentObserver(Settings.Global.getUriFor(key), false, stateObserver)
         }
-
-    // The equalizer has 20 GraphicEqualizerBandGains entries and the screen draws them as 10
-    // bars, each between -6 and +6 dB: bar i is gain 2i, the gains between two bars follow from
-    // the two bar values.
-    private fun buildGraphicEqualizer() {
-        val screen = findPreference<PreferenceScreen>(PREF_GEQ) ?: return
-        for (bar in 0 until DolbyCore.GEQ_BARS) {
-            screen.addPreference(
-                createSeekBar(
-                    "$PREF_GEQ_BAR$bar",
-                    GEQ_BAR_TITLES[bar],
-                    DolbyCore.GEQ_MIN_DB,
-                    DolbyCore.GEQ_MAX_DB,
-                )
-            )
-        }
-        screen.addPreference(
-            Preference(requireContext()).apply {
-                key = PREF_GEQ_RESET
-                setTitle(R.string.dolby_geq_reset)
-                onPreferenceClickListener = this@DolbyFragment
-            }
+        audioManager.addOnDevicesForAttributesChangedListener(
+            MEDIA,
+            requireContext().mainExecutor,
+            routeListener,
         )
+        updateState()
+    }
+
+    override fun onStop() {
+        audioManager.removeOnDevicesForAttributesChangedListener(routeListener)
+        requireContext().contentResolver.unregisterContentObserver(stateObserver)
+        super.onStop()
     }
 
     override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
@@ -110,25 +114,20 @@ class DolbyFragment :
             return true
         }
         when (preference.key) {
-            PREF_DOLBY_ENABLE -> DolbyCore.setEnabled(newValue as Boolean, preference.context)
-            PREF_DIALOG_ENHANCER -> DolbyCore.setDialogEnhancerEnabled(newValue as Boolean)
-            PREF_DIALOG_AMOUNT -> DolbyCore.setDialogEnhancerAmount(newValue as Int)
-            else -> {
-                if (preference.key?.startsWith(PREF_GEQ_BAR) == true) {
-                    writeGeqBars()
-                    preference.context?.let { DolbyCore.persistGeq(it) }
-                }
+            PREF_DOLBY_ENABLE -> {
+                DolbyCore.setEnabled(newValue as Boolean, preference.context)
+                updateState()
             }
+            PREF_DIALOGUE_ENHANCER -> DolbyCore.setDialogEnhancerLevel(newValue as Int)
         }
-        updateState()
         return true
     }
 
     override fun onPreferenceClick(preference: Preference): Boolean {
         val key = preference.key ?: return false
-        val modeIndex = MODE_KEYS.indexOf(key)
-        if (modeIndex >= 0) {
-            DolbyCore.setMode(MODE_VALUES[modeIndex], requireContext())
+        val mode = MODE_KEYS.indexOf(key)
+        if (mode >= 0) {
+            DolbyCore.setMode(MODE_VALUES[mode], requireContext())
             updateState()
             return true
         }
@@ -138,81 +137,95 @@ class DolbyFragment :
             updateState()
             return true
         }
-        if (key == PREF_GEQ_RESET) {
-            DolbyCore.setGeqBars(IntArray(DolbyCore.GEQ_BARS))
-            updateState()
-            requireContext().let { DolbyCore.persistGeq(it) }
-            return true
-        }
         return false
     }
 
-    private fun writeGeqBars() {
-        val screen = findPreference<PreferenceScreen>(PREF_GEQ) ?: return
-        val bars = IntArray(DolbyCore.GEQ_BARS) { bar ->
-            screen.findPreference<SeekBarPreference>("$PREF_GEQ_BAR$bar")?.value ?: 0
-        }
-        DolbyCore.setGeqBars(bars)
+    override fun onBandsChanged(bands: FloatArray) =
+        DolbyCore.setGeqBands(requireContext(), bands, persist = false)
+
+    override fun onBandsCommitted(bands: FloatArray) =
+        DolbyCore.setGeqBands(requireContext(), bands, persist = true)
+
+    private fun resetEqualizer() {
+        val flat = FloatArray(DolbyCore.GEQ_BANDS)
+        DolbyCore.setGeqBands(requireContext(), flat, persist = true)
+        equalizer.setBands(flat)
     }
 
+    private fun isMediaOnSpeaker(): Boolean {
+        val devices = audioManager.getAudioDevicesForAttributes(MEDIA)
+        return devices.isEmpty() || devices.any { it.type == AudioDeviceInfo.TYPE_BUILTIN_SPEAKER }
+    }
+
+    // The switch turns the effect on and off and leaves its profile alone, so the modes and the
+    // settings of the selected one stay on screen, greyed out while the effect is off.
     private fun updateState() {
-        val mode = DolbyCore.getMode()
+        val context = context ?: return
+        val enabled = DolbyCore.isEnabled()
+        val profile = DolbyCore.getSelectedProfile(context)
         updating = true
 
-        switchBar.isChecked = mode != DolbyCore.MODE_OFF
+        switchBar.isChecked = enabled
         for ((index, key) in MODE_KEYS.withIndex()) {
-            findPreference<SelectorWithWidgetPreference>(key)?.isChecked = mode == MODE_VALUES[index]
-        }
-
-        // The dialogue enhancer belongs to the movie profile, the presets and the equalizer to
-        // the music profile; the other profiles tune themselves.
-        val movie = mode == DolbyCore.MODE_MOVIE
-        val music = mode == DolbyCore.MODE_MUSIC
-
-        dialogEnhancer.isVisible = movie
-        dialogAmount.isVisible = movie
-        dialogEnhancer.isChecked = DolbyCore.isDialogEnhancerEnabled()
-        dialogAmount.value = DolbyCore.getDialogEnhancerAmount()
-
-        val preset = DolbyCore.getIeqPreset()
-        for ((index, key) in PRESET_KEYS.withIndex()) {
             findPreference<SelectorWithWidgetPreference>(key)?.apply {
-                isVisible = music
-                isChecked = index == preset
+                isEnabled = enabled
+                isChecked = profile == MODE_VALUES[index]
             }
         }
 
-        val screen = findPreference<PreferenceScreen>(PREF_GEQ)
-        screen?.isVisible = music
-        val bars = DolbyCore.getGeqBars()
-        for (bar in 0 until DolbyCore.GEQ_BARS) {
-            screen?.findPreference<SeekBarPreference>("$PREF_GEQ_BAR$bar")?.value = bars[bar]
+        // The dialogue enhancer belongs to the movie profile, the presets and the equalizer to
+        // the music profile; the dynamic profile tunes itself.
+        val movie = profile == DolbyCore.MODE_MOVIE
+        val music = profile == DolbyCore.MODE_MUSIC
+
+        dialogueCategory.isVisible = movie
+        if (movie) {
+            dialogueEnhancer.isEnabled = enabled
+            dialogueEnhancer.value = DolbyCore.getDialogEnhancerLevel()
         }
+
+        ieqCategory.isVisible = music
+        geqCategory.isVisible = music
+        if (music) {
+            val speaker = isMediaOnSpeaker()
+
+            val preset = DolbyCore.getIeqPreset()
+            ieqNote.isVisible = speaker
+            for ((index, key) in PRESET_KEYS.withIndex()) {
+                findPreference<SelectorWithWidgetPreference>(key)?.apply {
+                    isEnabled = enabled && !speaker
+                    isChecked = index == preset
+                }
+            }
+
+            equalizer.isEnabled = enabled && speaker
+            equalizer.summary = if (speaker) null else getString(R.string.dolby_geq_speaker_only)
+            equalizer.setBands(DolbyCore.getGeqBands(context))
+            geqReset.isEnabled = enabled && speaker
+        }
+
         updating = false
     }
 
     companion object {
         const val PREF_DOLBY_ENABLE = "dolby_enable"
-        const val PREF_DIALOG_ENHANCER = "dolby_dialogue_enhancer"
-        const val PREF_DIALOG_AMOUNT = "dolby_dialogue_enhancer_amount"
+        const val PREF_DIALOGUE_CATEGORY = "dolby_dialogue_category"
+        const val PREF_DIALOGUE_ENHANCER = "dolby_dialogue_enhancer"
+        const val PREF_IEQ_CATEGORY = "dolby_ieq_category"
+        const val PREF_IEQ_NOTE = "dolby_ieq_note"
+        const val PREF_GEQ_CATEGORY = "dolby_geq_category"
         const val PREF_GEQ = "dolby_geq"
-        const val PREF_GEQ_BAR = "dolby_geq_band"
         const val PREF_GEQ_RESET = "dolby_geq_reset"
 
-        // Order matters: the index is the profile id (0 dynamic, 1 movie, 2 music) and
-        // DolbyCore.MODE_OFF for the first entry.
-        val MODE_KEYS =
-            arrayOf("dolby_mode_off", "dolby_mode_dynamic", "dolby_mode_movie", "dolby_mode_music")
+        private val MEDIA = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).build()
+
+        // Order matters: the index is the profile id of dax-default.xml.
+        val MODE_KEYS = arrayOf("dolby_mode_dynamic", "dolby_mode_movie", "dolby_mode_music")
 
         val MODE_VALUES =
-            intArrayOf(
-                DolbyCore.MODE_OFF,
-                DolbyCore.MODE_DYNAMIC,
-                DolbyCore.MODE_MOVIE,
-                DolbyCore.MODE_MUSIC,
-            )
+            intArrayOf(DolbyCore.MODE_DYNAMIC, DolbyCore.MODE_MOVIE, DolbyCore.MODE_MUSIC)
 
-        // DolbyMusicEffectPreference radio buttons: none, detailed, balanced, warm.
+        // Order matters: the index is the IEQ preset id (none, detailed, balanced, warm).
         val PRESET_KEYS =
             arrayOf(
                 "dolby_preset_none",
@@ -220,10 +233,6 @@ class DolbyFragment :
                 "dolby_preset_balanced",
                 "dolby_preset_warm",
             )
-
-        // Bar centre frequencies of the 10-band equalizer.
-        private val GEQ_BAR_TITLES =
-            arrayOf("47", "234", "469", "844", "1K", "2K", "3K", "5K", "9K", "13K")
 
         fun modeTitle(context: Context, mode: Int): CharSequence =
             when (mode) {

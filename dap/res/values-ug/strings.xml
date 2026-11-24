@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">سۆزلەش ياخشىلاش</string>
     <string name="dolby_geq_title">ئېكۋالايزېر</string>
     <string name="dolby_geq_reset">ئەسلىگە قايتۇر</string>
+    <string name="dolby_ieq_category">ئەقلىي ئىقتىدارلىق EQ</string>
+    <string name="dolby_geq_speaker_only">ئېكۋالايزېر پەقەت تاختا كومپيۇتېر ياڭراتقۇسىغىلا قوللىنىلىدۇ</string>
+    <string name="dolby_ieq_headphones_only">ئالدىن تەڭشەكلەر پەقەت تىڭشىغۇچقىلا قوللىنىلىدۇ</string>
 </resources>

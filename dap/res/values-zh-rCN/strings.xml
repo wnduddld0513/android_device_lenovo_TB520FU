@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">对白增强器</string>
     <string name="dolby_geq_title">均衡器</string>
     <string name="dolby_geq_reset">重置</string>
+    <string name="dolby_ieq_category">智能 EQ</string>
+    <string name="dolby_geq_speaker_only">均衡器仅适用于平板电脑扬声器</string>
+    <string name="dolby_ieq_headphones_only">预设仅适用于耳机</string>
 </resources>

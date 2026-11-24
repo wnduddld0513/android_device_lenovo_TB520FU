@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Паляпшальнік дыялогу</string>
     <string name="dolby_geq_title">Эквалайзер</string>
     <string name="dolby_geq_reset">Скінуць</string>
+    <string name="dolby_ieq_category">Інтэлектуальны EQ</string>
+    <string name="dolby_geq_speaker_only">Эквалайзер ужываецца толькі да дынаміка планшэта</string>
+    <string name="dolby_ieq_headphones_only">Прэсеты ўжываюцца толькі да навушнікаў</string>
 </resources>

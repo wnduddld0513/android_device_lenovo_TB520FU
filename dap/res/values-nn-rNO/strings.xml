@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Dialogforbetrar</string>
     <string name="dolby_geq_title">Utjamnar</string>
     <string name="dolby_geq_reset">Tilbakestill</string>
+    <string name="dolby_ieq_category">Intelligent EQ</string>
+    <string name="dolby_geq_speaker_only">Utjamnaren gjeld berre for høgtalaren på nettbrettet</string>
+    <string name="dolby_ieq_headphones_only">Førehandsinnstillingane gjeld berre for hovudtelefonar</string>
 </resources>

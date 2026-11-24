@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">დიალოგის გაუმჯობესება</string>
     <string name="dolby_geq_title">ეკვალაიზერი</string>
     <string name="dolby_geq_reset">გადაყენება</string>
+    <string name="dolby_ieq_category">ინტელექტუალური EQ</string>
+    <string name="dolby_geq_speaker_only">ეკვალაიზერი გამოიყენება მხოლოდ ტაბლეტის დინამიკზე</string>
+    <string name="dolby_ieq_headphones_only">წინასწარ დაყენებული პარამეტრები გამოიყენება მხოლოდ ყურსასმენებზე</string>
 </resources>

@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Bộ tăng cường hội thoại</string>
     <string name="dolby_geq_title">Bộ chỉnh âm</string>
     <string name="dolby_geq_reset">Đặt lại</string>
+    <string name="dolby_ieq_category">EQ thông minh</string>
+    <string name="dolby_geq_speaker_only">Bộ chỉnh âm chỉ áp dụng cho loa máy tính bảng</string>
+    <string name="dolby_ieq_headphones_only">Các chế độ đặt sẵn chỉ áp dụng cho tai nghe</string>
 </resources>

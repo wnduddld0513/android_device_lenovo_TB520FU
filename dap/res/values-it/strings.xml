@@ -11,4 +11,7 @@
     <string name="dolby_dialogue_enhancer_title">Miglioramento dialoghi</string>
     <string name="dolby_geq_title">Equalizzatore</string>
     <string name="dolby_geq_reset">Reimposta</string>
+    <string name="dolby_ieq_category">EQ intelligente</string>
+    <string name="dolby_geq_speaker_only">L\'equalizzatore si applica solo all\'altoparlante del tablet</string>
+    <string name="dolby_ieq_headphones_only">I preset si applicano solo alle cuffie</string>
 </resources>
